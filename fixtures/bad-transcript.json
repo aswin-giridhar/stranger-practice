@@ -1,0 +1,61 @@
+{
+  "sessionId": "fixture-bad-001",
+  "personaId": "warm",
+  "durationMs": 180000,
+  "turns": [
+    {
+      "role": "persona",
+      "text": "Hi there! Looks like the train is delayed by twenty minutes. Are you heading into the city for work today?",
+      "startedAt": 0,
+      "endedAt": 6500,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "I was just thinking about quantum mechanics and how vintage keyboards from 1984 have completely different mechanical switch dampening systems than modern plastic keycaps and I spent four hours yesterday taking apart a vintage IBM model M keyboard to clean the buckling springs.",
+      "startedAt": 4200,
+      "endedAt": 38000,
+      "latencyMs": 4200,
+      "overlappedPersona": true,
+      "onTopic": false
+    },
+    {
+      "role": "persona",
+      "text": "Oh, that sounds like a very detailed project.",
+      "startedAt": 39000,
+      "endedAt": 42000,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "Also the lubricant you use on the stabilizers is super important because if you use petroleum jelly it will dissolve the ABS plastic over six months and ruin the entire tactile feedback curve completely.",
+      "startedAt": 40500,
+      "endedAt": 75000,
+      "latencyMs": 4500,
+      "overlappedPersona": true,
+      "onTopic": false
+    },
+    {
+      "role": "persona",
+      "text": "I see. Trains can be noisy too.",
+      "startedAt": 76000,
+      "endedAt": 78500,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "Mechanical switches produce sixty-two decibels of auditory click actuation which is actually the same acoustic frequency as a small typewriter from the nineteen fifties.",
+      "startedAt": 77000,
+      "endedAt": 115000,
+      "latencyMs": 4600,
+      "overlappedPersona": true,
+      "onTopic": false
+    }
+  ]
+}

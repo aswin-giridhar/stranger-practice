@@ -1,0 +1,97 @@
+{
+  "sessionId": "fixture-good-001",
+  "personaId": "warm",
+  "durationMs": 180000,
+  "turns": [
+    {
+      "role": "persona",
+      "text": "Hi there! Looks like the train is delayed by twenty minutes. Are you heading into the city for work today?",
+      "startedAt": 0,
+      "endedAt": 6500,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "Yeah, I'm commuting to the office downtown. How about you, are you traveling for work or heading home?",
+      "startedAt": 7200,
+      "endedAt": 13500,
+      "latencyMs": 700,
+      "overlappedPersona": false,
+      "onTopic": true
+    },
+    {
+      "role": "persona",
+      "text": "Just heading to meet an old university friend for coffee. It's been years since we caught up.",
+      "startedAt": 14200,
+      "endedAt": 19800,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "That sounds really nice. Where are you planning to go for coffee in the city?",
+      "startedAt": 20600,
+      "endedAt": 26000,
+      "latencyMs": 800,
+      "overlappedPersona": false,
+      "onTopic": true
+    },
+    {
+      "role": "persona",
+      "text": "A little place near the botanical gardens called Green Leaf. Have you ever been around that area?",
+      "startedAt": 26800,
+      "endedAt": 33000,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "Oh, actually I got a plant from there last summer! But anyway, yes, Green Leaf has fantastic pastries.",
+      "startedAt": 33600,
+      "endedAt": 41000,
+      "latencyMs": 600,
+      "overlappedPersona": false,
+      "onTopic": false
+    },
+    {
+      "role": "persona",
+      "text": "Glad to hear that, I will make sure to try their almond croissants.",
+      "startedAt": 41800,
+      "endedAt": 46500,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "Their almond croissants are definitely the highlight. Do you often take this train line?",
+      "startedAt": 47300,
+      "endedAt": 53500,
+      "latencyMs": 800,
+      "overlappedPersona": false,
+      "onTopic": true
+    },
+    {
+      "role": "persona",
+      "text": "Only when visiting this side of town. The commute feels longer with the signal works today.",
+      "startedAt": 54200,
+      "endedAt": 60000,
+      "latencyMs": null,
+      "overlappedPersona": false,
+      "onTopic": null
+    },
+    {
+      "role": "user",
+      "text": "Definitely. Hopefully the platform display updates with good news soon.",
+      "startedAt": 60800,
+      "endedAt": 66000,
+      "latencyMs": 800,
+      "overlappedPersona": false,
+      "onTopic": true
+    }
+  ]
+}

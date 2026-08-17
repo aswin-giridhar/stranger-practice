@@ -1,0 +1,10 @@
+.env
+.env*.local
+node_modules/
+.next/
+.vercel
+*.log
+
+# Internal working notes / session handoff. Not part of the judged submission.
+context/
+.data/
