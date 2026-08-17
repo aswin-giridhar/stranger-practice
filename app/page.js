@@ -78,28 +78,39 @@ export default function StrangerPracticePage() {
   // Policy Engine for Silence & Interruption Tolerance
   useEffect(() => {
     if (view !== 'active' || isProcessingTurn) return;
+    // Halt the policy engine once a turn has failed. Without this the silence timer
+    // re-fires every 200ms, and a single upstream error becomes dozens of retries that
+    // burn the rate limit and make a recoverable problem permanent.
+    if (errorMessage) return;
 
     const policy = selectedPersona.policy;
     const interval = setInterval(() => {
       const now = Date.now();
 
-      // Silence Tolerance
+      // Silence Tolerance.
+      // Push the marker forward BEFORE submitting. Without this the condition stays true
+      // and this interval re-fires a [Silence] turn every 200ms -- five Gemini calls a
+      // second, which both exhausts the rate limit and means the persona never actually
+      // waits for you to speak.
       if (floorState === 'silence' && policy.silenceToleranceMs) {
         if (now - floorBecameSilenceAtRef.current > policy.silenceToleranceMs) {
+          floorBecameSilenceAtRef.current = now;
           handleUserTurnSubmit('[Silence]', true);
         }
       }
 
-      // Interruption Tolerance
+      // Interruption Tolerance. Same one-shot guard: clearing the start marker stops the
+      // interrupt from firing again on every tick while the user keeps talking.
       if (floorState === 'user' && policy.interrupts && policy.interruptAfterMs) {
         if (speechStartedAtRef.current && (now - speechStartedAtRef.current > policy.interruptAfterMs)) {
+          speechStartedAtRef.current = null;
           handleUserTurnSubmit(liveTranscript || '[Inaudible]', true);
         }
       }
     }, 200);
 
     return () => clearInterval(interval);
-  }, [view, isProcessingTurn, floorState, liveTranscript, selectedPersona]);
+  }, [view, isProcessingTurn, floorState, liveTranscript, selectedPersona, errorMessage]);
 
   // Initialize Speech Recognition support detection
   useEffect(() => {

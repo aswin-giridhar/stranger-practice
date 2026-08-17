@@ -1,0 +1,24 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - banner [ref=f3e3]:
+      - generic [ref=f3e5]:
+        - generic [ref=f3e6]: PRACTICE GYM
+        - heading "Stranger Practice" [level=1] [ref=f3e7]
+    - main [ref=f3e11]:
+      - generic [ref=f3e12]:
+        - alert [ref=f3e120]:
+          - generic [ref=f3e121]: "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 15, model: gemini-3.1-flash-lite Please retry in 9.909504867s."
+          - button "Dismiss" [ref=f3e122] [cursor=pointer]
+        - generic [ref=f3e123]:
+          - generic [ref=f3e124]: Maya · waiting for a delayed train, happy to chat
+          - paragraph
+          - generic [ref=f3e131]:
+            - generic [ref=f3e132]: The floor is open
+            - generic "2:59 remaining" [ref=f3e134]: Just getting started
+          - generic [ref=f3e135]:
+            - button "Microphone on" [ref=f3e136] [cursor=pointer]
+            - button "Type instead" [ref=f3e137] [cursor=pointer]
+            - button "End early" [ref=f3e138] [cursor=pointer]
+          - group [ref=f3e139]:
+            - generic "Show what has been said so far (3)" [ref=f3e140] [cursor=pointer]
+  - alert [ref=f3e119]

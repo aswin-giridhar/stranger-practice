@@ -1,0 +1,96 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - banner [ref=f3e3]:
+      - generic [ref=f3e4]:
+        - generic [ref=f3e5]:
+          - generic [ref=f3e6]: PRACTICE GYM
+          - heading "Stranger Practice" [level=1] [ref=f3e7]
+        - generic [ref=f3e8]: Gemini 2.5 Active
+    - main [ref=f3e11]:
+      - generic [ref=f3e13]:
+        - generic [ref=f3e14]:
+          - generic [ref=f3e15]:
+            - text: Conversation practice for ADHD adults
+            - heading [level=2] [ref=f3e16]:
+              - text: Rehearse the part that
+              - emphasis [ref=f3e17]: actually
+              - text: goes wrong.
+          - generic [ref=f3e18]:
+            - paragraph [ref=f3e19]: Three strangers, each difficult in a different way. Talk to one of them out loud for three minutes. Afterwards you get one thing to work on — measured from what happened, not guessed.
+            - list [ref=f3e20]:
+              - listitem [ref=f3e21]:
+                - generic [ref=f3e22]: 3:00
+                - generic [ref=f3e23]: A session runs three minutes and ends by itself. Nothing to decide part-way through.
+              - listitem [ref=f3e24]:
+                - generic [ref=f3e25]: "3"
+                - generic [ref=f3e26]: Three people to practise against, from gentle to genuinely hard work.
+              - listitem [ref=f3e27]:
+                - generic [ref=f3e28]: "1"
+                - generic [ref=f3e29]: One thing to work on at the end. Not a scoreboard.
+        - region [ref=f3e30]:
+          - generic [ref=f3e31]:
+            - heading "Choose who you’re talking to" [level=3] [ref=f3e32]
+            - generic [ref=f3e33]: Step 1 of 2
+          - radiogroup "Choose who you’re talking to" [ref=f3e34]:
+            - radio "Maya waiting for a delayed train, happy to chat Warm and patient. Gives you room. Lets you finish your sentence Waits a beat before filling a pause Gives you a couple of sentences back Gentle · 1/5 Selected" [checked] [ref=f3e35] [cursor=pointer]:
+              - generic [ref=f3e37]:
+                - generic [ref=f3e38]:
+                  - generic [ref=f3e39]: Maya
+                  - generic [ref=f3e40]: waiting for a delayed train, happy to chat
+                - generic [ref=f3e41]: Warm and patient. Gives you room.
+                - generic [ref=f3e42]:
+                  - generic [ref=f3e43]: Lets you finish your sentence
+                  - generic [ref=f3e44]: Waits a beat before filling a pause
+                  - generic [ref=f3e45]: Gives you a couple of sentences back
+              - generic [ref=f3e46]:
+                - generic [ref=f3e47]: Gentle · 1/5
+                - generic [ref=f3e54]: Selected
+            - radio "Dan busy, half-distracted, somewhere to be Brisk and transactional. Will cut you off. Cuts in if you run past 7 seconds Fills a pause almost immediately Keeps replies to one short line Demanding · 3/5" [ref=f3e55] [cursor=pointer]:
+              - generic [ref=f3e57]:
+                - generic [ref=f3e58]:
+                  - generic [ref=f3e59]: Dan
+                  - generic [ref=f3e60]: busy, half-distracted, somewhere to be
+                - generic [ref=f3e61]: Brisk and transactional. Will cut you off.
+                - generic [ref=f3e62]:
+                  - generic [ref=f3e63]: Cuts in if you run past 7 seconds
+                  - generic [ref=f3e64]: Fills a pause almost immediately
+                  - generic [ref=f3e65]: Keeps replies to one short line
+              - generic [ref=f3e66]: Demanding · 3/5
+            - radio "Priya polite but not forthcoming, gives you little to work with Reserved and low-signal. You carry it. Lets you finish your sentence Will sit in a silence Answers in a handful of words Sparse · 4/5" [ref=f3e74] [cursor=pointer]:
+              - generic [ref=f3e76]:
+                - generic [ref=f3e77]:
+                  - generic [ref=f3e78]: Priya
+                  - generic [ref=f3e79]: polite but not forthcoming, gives you little to work with
+                - generic [ref=f3e80]: Reserved and low-signal. You carry it.
+                - generic [ref=f3e81]:
+                  - generic [ref=f3e82]: Lets you finish your sentence
+                  - generic [ref=f3e83]: Will sit in a silence
+                  - generic [ref=f3e84]: Answers in a handful of words
+              - generic [ref=f3e85]: Sparse · 4/5
+        - generic [ref=f3e93]:
+          - generic [ref=f3e94]:
+            - heading "Practise with Maya" [level=3] [ref=f3e95]
+            - paragraph [ref=f3e96]: Your microphone carries the conversation. You can switch to typing at any point.
+          - button "Start the three minutes" [ref=f3e97] [cursor=pointer]
+        - region [ref=f3e98]:
+          - generic [ref=f3e99]:
+            - generic [ref=f3e100]: Keeping this going
+            - heading "The first session is free" [level=3] [ref=f3e101]
+            - paragraph [ref=f3e102]: Have a conversation and read the report without paying for anything. After that, one price keeps the strangers available.
+          - generic [ref=f3e103]:
+            - paragraph [ref=f3e104]:
+              - generic [ref=f3e105]: £6
+              - generic [ref=f3e106]: a month
+            - list [ref=f3e107]:
+              - listitem [ref=f3e108]: Three minutes a day if you want it, with any of the three strangers.
+              - listitem [ref=f3e109]: A measured read-back after every session, and one thing to work on.
+              - listitem [ref=f3e110]: Cancel whenever. No notice period, no exit questionnaire.
+          - button "Practise for £6 a month" [ref=f3e112] [cursor=pointer]
+          - paragraph [ref=f3e113]: Practice sessions and the report that follows are a rehearsal exercise. Paying changes how many conversations you can have, and nothing else.
+    - contentinfo [ref=f3e114]:
+      - generic [ref=f3e115]:
+        - paragraph [ref=f3e116]:
+          - strong [ref=f3e117]: "Disclaimer:"
+          - text: Stranger Practice is an educational communication rehearsal gym. It is not therapy, diagnosis, or clinical treatment.
+        - paragraph [ref=f3e118]: Powered by Google Gemini & GCP • XPRIZE Hackathon 2026
+  - alert [ref=f3e119]
