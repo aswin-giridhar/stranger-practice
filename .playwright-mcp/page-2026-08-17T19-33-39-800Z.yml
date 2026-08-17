@@ -1,0 +1,89 @@
+- generic [ref=f12e1]:
+  - generic [ref=f12e2]:
+    - banner [ref=f12e3]:
+      - generic [ref=f12e4]:
+        - generic [ref=f12e5]:
+          - generic [ref=f12e6]: PRACTICE GYM
+          - heading "Stranger Practice" [level=1] [ref=f12e7]
+        - generic [ref=f12e8]: Gemini 2.5 Active
+    - main [ref=f12e11]:
+      - generic [ref=f12e12]:
+        - alert [ref=f12e168]:
+          - generic [ref=f12e169]: Gemini returned no text content
+          - button "Dismiss" [ref=f12e170] [cursor=pointer]
+        - generic [ref=f12e186]:
+          - generic [ref=f12e187]:
+            - generic [ref=f12e188]:
+              - text: After the session
+              - paragraph [ref=f12e189]: Priya · 56 seconds · 10 turns from you
+            - paragraph [ref=f12e190]: Overall 84
+          - generic [ref=f12e191]:
+            - generic [ref=f12e192]:
+              - text: Work on this next
+              - heading "Share of the talking you did" [active] [level=2] [ref=f12e193]
+              - paragraph [ref=f12e194]: Try to avoid repeating the other person's words back to them, as this can make the conversation feel repetitive. Instead, focus on asking open-ended questions or sharing a new detail to keep the momentum moving forward naturally.
+            - generic [ref=f12e195]:
+              - generic [ref=f12e196]:
+                - term [ref=f12e197]: Your reading
+                - definition [ref=f12e198]: 77%
+              - generic [ref=f12e199]:
+                - term [ref=f12e200]: Comfortable range
+                - definition [ref=f12e201]:
+                  - text: 35–62%
+                  - generic [ref=f12e202]: Everything outside this is worth a look, not a worry.
+          - region [ref=f12e203]:
+            - generic [ref=f12e204]:
+              - heading "Everything else, for reference" [level=3] [ref=f12e205]
+              - generic [ref=f12e206]: Read it or don’t
+            - generic [ref=f12e207]:
+              - generic [ref=f12e208]:
+                - generic [ref=f12e209]:
+                  - text: Share of the talking you did
+                  - generic [ref=f12e210]: Your focus
+                - generic [ref=f12e211]: 77%
+                - generic [ref=f12e212]: Near the edge
+              - generic [ref=f12e213]:
+                - generic [ref=f12e214]: Times you cut in
+                - generic [ref=f12e215]: 1.1 per min
+                - generic [ref=f12e216]: Comfortable
+              - generic [ref=f12e217]:
+                - generic [ref=f12e218]: How often you asked something back
+                - generic [ref=f12e219]: 30%
+                - generic [ref=f12e220]: Comfortable
+              - generic [ref=f12e221]:
+                - generic [ref=f12e222]: Staying on the thread
+                - generic [ref=f12e223]: 40%
+                - generic [ref=f12e224]: Near the edge
+              - generic [ref=f12e225]:
+                - generic [ref=f12e226]: Finding your way back after a detour
+                - generic [ref=f12e227]: 60%
+                - generic [ref=f12e228]: Comfortable
+              - generic [ref=f12e229]:
+                - generic [ref=f12e230]: Time to start replying
+                - generic [ref=f12e231]: 986 ms
+                - generic [ref=f12e232]: Comfortable
+          - generic [ref=f12e233]:
+            - button "Practise again" [ref=f12e234] [cursor=pointer]
+            - generic [ref=f12e235]: Nothing here is a verdict on you. It is a record of one three-minute conversation.
+          - region [ref=f12e236]:
+            - generic [ref=f12e237]:
+              - generic [ref=f12e238]: Keeping this going
+              - heading "The first session is free" [level=3] [ref=f12e239]
+              - paragraph [ref=f12e240]: For quieter, more introverted people who find talking to strangers hard work. Have a conversation and read the report without paying for anything. After that, one price keeps the strangers available.
+            - generic [ref=f12e241]:
+              - paragraph [ref=f12e242]:
+                - generic [ref=f12e243]: £6
+                - generic [ref=f12e244]: a month
+              - list [ref=f12e245]:
+                - listitem [ref=f12e246]: Three minutes a day if you want it, with any of the three strangers.
+                - listitem [ref=f12e247]: A measured read-back after every session, and one thing to work on.
+                - listitem [ref=f12e248]: Cancel whenever. No notice period, no exit questionnaire.
+            - button "Practise for £6 a month" [ref=f12e250] [cursor=pointer]
+            - paragraph [ref=f12e251]: Practice sessions and the report that follows are a rehearsal exercise. Paying changes how many conversations you can have, and nothing else.
+    - contentinfo [ref=f12e136]:
+      - generic [ref=f12e137]:
+        - paragraph [ref=f12e138]:
+          - strong [ref=f12e139]: "Disclaimer:"
+          - text: Stranger Practice is educational communication practice — a rehearsal exercise with feedback on what you did. It is not therapy, diagnosis, or treatment, and it makes no claim about health.
+        - paragraph [ref=f12e140]: Powered by Google Gemini & GCP • XPRIZE Hackathon 2026
+  - alert [ref=f12e141]

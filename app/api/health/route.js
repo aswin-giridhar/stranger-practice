@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { generateText, synthesizeSpeech, TEXT_MODEL, TTS_MODEL } from '@/lib/gemini';
+import { logEvent, getStoreStatus } from '@/lib/logstore';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -10,7 +11,37 @@ export async function GET() {
 
   let geminiResult = { ok: false, model: TEXT_MODEL, latencyMs: 0, sample: null };
   let geminiTtsResult = { ok: false, model: TTS_MODEL, voice: 'Kore', latencyMs: 0, audioBytes: 0 };
+  // Actually write something. This field used to be hardcoded false, which meant the
+  // health check reported on storage without ever touching it -- a probe that cannot pass
+  // is not measuring anything.
   let firestoreResult = { ok: false, configured: false };
+  const storeStart = Date.now();
+  try {
+    const status = getStoreStatus();
+    await logEvent({
+      sessionId: 'health-probe',
+      kind: 'health_check',
+      payload: { checkedAt, source: 'api/health' },
+    });
+    firestoreResult = {
+      ok: status.backend === 'firestore',
+      configured: status.backend === 'firestore',
+      backend: status.backend,
+      projectId: status.projectId || null,
+      database: status.database || null,
+      latencyMs: Date.now() - storeStart,
+      // A JSONL fallback is a working store, but it is NOT durable on serverless and is
+      // not the Google Cloud product. Say which one actually ran.
+      note: status.backend === 'firestore' ? undefined : 'Falling back to local JSONL; not durable on Vercel.',
+    };
+  } catch (err) {
+    firestoreResult = {
+      ok: false,
+      configured: true,
+      latencyMs: Date.now() - storeStart,
+      error: { code: err?.code || 'UPSTREAM_ERROR', message: String(err?.message || err).slice(0, 200) },
+    };
+  }
 
   // 1. Test Text Generation
   const textStart = Date.now();

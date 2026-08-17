@@ -1,0 +1,118 @@
+- generic [active] [ref=f12e1]:
+  - generic [ref=f12e2]:
+    - banner [ref=f12e3]:
+      - generic [ref=f12e4]:
+        - generic [ref=f12e5]:
+          - generic [ref=f12e6]: PRACTICE GYM
+          - heading "Stranger Practice" [level=1] [ref=f12e7]
+        - generic [ref=f12e8]: Gemini 2.5 Active
+    - main [ref=f12e11]:
+      - generic [ref=f12e13]:
+        - generic [ref=f12e14]:
+          - generic [ref=f12e15]:
+            - text: Practice talking to strangers
+            - heading [level=2] [ref=f12e16]:
+              - text: Rehearse the part that
+              - emphasis [ref=f12e17]: actually
+              - text: goes wrong.
+          - generic [ref=f12e18]:
+            - paragraph [ref=f12e19]: "Three strangers, each difficult in a different way. Talk to one of them out loud for three minutes. Afterwards you get one thing to work on — measured from what happened, not guessed. It is for anyone who finds strangers hard work: new to a country, back at work after a long gap, an interview or a room full of networking coming up, shy, neurodivergent, or simply out of practice."
+            - list [ref=f12e20]:
+              - listitem [ref=f12e21]:
+                - generic [ref=f12e22]: 3:00
+                - generic [ref=f12e23]: A session runs three minutes and ends by itself. Nothing to decide part-way through.
+              - listitem [ref=f12e24]:
+                - generic [ref=f12e25]: "3"
+                - generic [ref=f12e26]: Three people to practise against, from gentle to genuinely hard work.
+              - listitem [ref=f12e27]:
+                - generic [ref=f12e28]: "1"
+                - generic [ref=f12e29]: One thing to work on at the end. Not a scoreboard.
+        - region [ref=f12e30]:
+          - generic [ref=f12e31]:
+            - heading "Choose who you’re talking to" [level=3] [ref=f12e32]
+            - generic [ref=f12e33]: Step 1 of 2
+          - generic [ref=f12e34]:
+            - group "Concourse map. Focus it and use the arrow keys or W A S D to walk, Enter to talk." [ref=f12e35]:
+              - img "A station concourse seen from above. Maya, Warm and patient. Gives you room. Dan, Brisk and transactional. Will cut you off. Priya, Reserved and low-signal. You carry it. Your figure can be walked toward any of them. The same choices are available as buttons." [ref=f12e36]
+              - paragraph: Click to walk · WASD / arrows · Enter to talk
+            - generic [ref=f12e37]:
+              - generic [ref=f12e39]:
+                - paragraph [ref=f12e40]: Maya
+                - paragraph [ref=f12e41]: Warm and patient. Gives you room.
+                - paragraph [ref=f12e42]: waiting for a delayed train, happy to chat · difficulty 1/5
+              - button "Talk to Maya" [ref=f12e43] [cursor=pointer]
+            - paragraph [ref=f12e44]
+            - generic [ref=f12e45]:
+              - paragraph [ref=f12e46]: Choose someone to talk to
+              - generic [ref=f12e47]:
+                - button "Walk to Maya — Warm and patient. Gives you room." [pressed] [ref=f12e48] [cursor=pointer]
+                - button "Talk to Maya" [ref=f12e49] [cursor=pointer]
+              - generic [ref=f12e50]:
+                - button "Walk to Dan — Brisk and transactional. Will cut you off." [ref=f12e51] [cursor=pointer]
+                - button "Talk to Dan" [ref=f12e52] [cursor=pointer]
+              - generic [ref=f12e53]:
+                - button "Walk to Priya — Reserved and low-signal. You carry it." [ref=f12e54] [cursor=pointer]
+                - button "Talk to Priya" [ref=f12e55] [cursor=pointer]
+          - radiogroup "Choose who you’re talking to" [ref=f12e56]:
+            - radio "Maya waiting for a delayed train, happy to chat Warm and patient. Gives you room. Lets you finish your sentence Waits a beat before filling a pause Gives you a couple of sentences back Gentle · 1/5 Selected" [checked] [ref=f12e57] [cursor=pointer]:
+              - generic [ref=f12e59]:
+                - generic [ref=f12e60]:
+                  - generic [ref=f12e61]: Maya
+                  - generic [ref=f12e62]: waiting for a delayed train, happy to chat
+                - generic [ref=f12e63]: Warm and patient. Gives you room.
+                - generic [ref=f12e64]:
+                  - generic [ref=f12e65]: Lets you finish your sentence
+                  - generic [ref=f12e66]: Waits a beat before filling a pause
+                  - generic [ref=f12e67]: Gives you a couple of sentences back
+              - generic [ref=f12e68]:
+                - generic [ref=f12e69]: Gentle · 1/5
+                - generic [ref=f12e76]: Selected
+            - radio "Dan busy, half-distracted, somewhere to be Brisk and transactional. Will cut you off. Cuts in if you run past 7 seconds Fills a pause almost immediately Keeps replies to one short line Demanding · 3/5" [ref=f12e77] [cursor=pointer]:
+              - generic [ref=f12e79]:
+                - generic [ref=f12e80]:
+                  - generic [ref=f12e81]: Dan
+                  - generic [ref=f12e82]: busy, half-distracted, somewhere to be
+                - generic [ref=f12e83]: Brisk and transactional. Will cut you off.
+                - generic [ref=f12e84]:
+                  - generic [ref=f12e85]: Cuts in if you run past 7 seconds
+                  - generic [ref=f12e86]: Fills a pause almost immediately
+                  - generic [ref=f12e87]: Keeps replies to one short line
+              - generic [ref=f12e88]: Demanding · 3/5
+            - radio "Priya polite but not forthcoming, gives you little to work with Reserved and low-signal. You carry it. Lets you finish your sentence Will sit in a silence Answers in a handful of words Sparse · 4/5" [ref=f12e96] [cursor=pointer]:
+              - generic [ref=f12e98]:
+                - generic [ref=f12e99]:
+                  - generic [ref=f12e100]: Priya
+                  - generic [ref=f12e101]: polite but not forthcoming, gives you little to work with
+                - generic [ref=f12e102]: Reserved and low-signal. You carry it.
+                - generic [ref=f12e103]:
+                  - generic [ref=f12e104]: Lets you finish your sentence
+                  - generic [ref=f12e105]: Will sit in a silence
+                  - generic [ref=f12e106]: Answers in a handful of words
+              - generic [ref=f12e107]: Sparse · 4/5
+        - generic [ref=f12e115]:
+          - generic [ref=f12e116]:
+            - heading "Practise with Maya" [level=3] [ref=f12e117]
+            - paragraph [ref=f12e118]: Your microphone carries the conversation. You can switch to typing at any point.
+          - button "Start the three minutes" [ref=f12e119] [cursor=pointer]
+        - region [ref=f12e120]:
+          - generic [ref=f12e121]:
+            - generic [ref=f12e122]: Keeping this going
+            - heading "The first session is free" [level=3] [ref=f12e123]
+            - paragraph [ref=f12e124]: For quieter, more introverted people who find talking to strangers hard work. Have a conversation and read the report without paying for anything. After that, one price keeps the strangers available.
+          - generic [ref=f12e125]:
+            - paragraph [ref=f12e126]:
+              - generic [ref=f12e127]: £6
+              - generic [ref=f12e128]: a month
+            - list [ref=f12e129]:
+              - listitem [ref=f12e130]: Three minutes a day if you want it, with any of the three strangers.
+              - listitem [ref=f12e131]: A measured read-back after every session, and one thing to work on.
+              - listitem [ref=f12e132]: Cancel whenever. No notice period, no exit questionnaire.
+          - button "Practise for £6 a month" [ref=f12e134] [cursor=pointer]
+          - paragraph [ref=f12e135]: Practice sessions and the report that follows are a rehearsal exercise. Paying changes how many conversations you can have, and nothing else.
+    - contentinfo [ref=f12e136]:
+      - generic [ref=f12e137]:
+        - paragraph [ref=f12e138]:
+          - strong [ref=f12e139]: "Disclaimer:"
+          - text: Stranger Practice is educational communication practice — a rehearsal exercise with feedback on what you did. It is not therapy, diagnosis, or treatment, and it makes no claim about health.
+        - paragraph [ref=f12e140]: Powered by Google Gemini & GCP • XPRIZE Hackathon 2026
+  - alert [ref=f12e141]

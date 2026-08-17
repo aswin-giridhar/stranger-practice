@@ -539,6 +539,35 @@ function buildScene(b, params) {
 /* ---------- renderer ---------- */
 
 /**
+ * True only when a WebGL context comes up AND our two programs actually build.
+ *
+ * Probed on a throwaway canvas on purpose: once a canvas has handed out a WebGL
+ * context, getContext('2d') on that same canvas returns null forever. Probing
+ * the real canvas would therefore poison the Canvas 2D fallback and leave an
+ * empty box on any machine where the shaders fail to compile.
+ */
+export function webglUsable() {
+  if (typeof document === 'undefined') return false;
+  let gl = null;
+  try {
+    const probe = document.createElement('canvas');
+    gl = probe.getContext('webgl') || probe.getContext('experimental-webgl');
+    if (!gl) return false;
+    gl.deleteProgram(link(gl, SOLID_VS, SOLID_FS));
+    gl.deleteProgram(link(gl, TEX_VS, TEX_FS));
+    return true;
+  } catch (err) {
+    console.warn('lobbyGL: WebGL unusable, falling back to Canvas 2D.', err);
+    return false;
+  } finally {
+    if (gl) {
+      const lose = gl.getExtension('WEBGL_lose_context');
+      if (lose) lose.loseContext();
+    }
+  }
+}
+
+/**
  * Returns a renderer bound to `canvas`, or null when WebGL is unavailable.
  * A null return is the caller's cue to keep the Canvas 2D path — never to
  * render an empty canvas.

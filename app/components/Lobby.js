@@ -20,7 +20,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './lobby.css';
-import { createGLRenderer, withAlpha, mix } from './lobbyGL';
+import { createGLRenderer, webglUsable, withAlpha, mix } from './lobbyGL';
 
 /* The scene is authored in a fixed logical space and letterboxed into whatever
    box the container gives us. One coordinate system, any screen size. */
@@ -336,9 +336,11 @@ export default function Lobby({ personas, selectedId, onSelect, onConfirm }) {
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
 
-    /* WebGL first. A null context is a real absence, so fall back to the 2D
-       path rather than leaving an empty canvas that reads as a bug. */
-    const renderer = createGLRenderer(canvas);
+    /* WebGL first, but probed on a throwaway canvas: asking THIS canvas for a
+       WebGL context would permanently deny it a 2D one, so a shader failure
+       would leave an empty box. A real absence falls back to the 2D path
+       instead of rendering a blank canvas that reads as a bug. */
+    const renderer = webglUsable() ? createGLRenderer(canvas) : null;
     const ctx = renderer ? null : canvas.getContext('2d');
     setRenderMode(renderer ? 'gl' : '2d');
     if (!renderer && !ctx) return undefined;

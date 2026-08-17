@@ -1,0 +1,29 @@
+- generic [ref=f12e1]:
+  - generic [ref=f12e2]:
+    - banner [ref=f12e3]:
+      - generic [ref=f12e5]:
+        - generic [ref=f12e6]: PRACTICE GYM
+        - heading "Stranger Practice" [level=1] [ref=f12e7]
+    - main [ref=f12e11]:
+      - generic [ref=f12e12]:
+        - alert [ref=f12e168]:
+          - generic [ref=f12e169]: Gemini returned no text content
+          - button "Dismiss" [ref=f12e170] [cursor=pointer]
+        - generic [ref=f12e148]:
+          - generic [ref=f12e149]: Priya · polite but not forthcoming, gives you little to work with
+          - paragraph [ref=f12e156]: I am
+          - generic [ref=f12e157]:
+            - generic [ref=f12e158]: The floor is open
+            - generic "2:44 remaining" [ref=f12e171]: Just getting started
+          - generic [ref=f12e161]:
+            - button "Microphone on" [ref=f12e172] [cursor=pointer]
+            - button "Hide the keyboard" [active] [ref=f12e173] [cursor=pointer]
+            - button "End early" [ref=f12e164] [cursor=pointer]
+          - generic [ref=f12e174]:
+            - generic [ref=f12e175]: Type what you would say
+            - textbox "Type what you would say" [ref=f12e176]:
+              - /placeholder: Type what you would say…
+            - button "Say it" [disabled] [ref=f12e177]
+          - group [ref=f12e165]:
+            - generic "Show what has been said so far (4)" [ref=f12e178] [cursor=pointer]
+  - alert [ref=f12e141]

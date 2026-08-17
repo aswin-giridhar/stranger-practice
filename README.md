@@ -38,8 +38,7 @@ people, including people with ADHD, who want unstructured reps somewhere nothing
 The product does not act on any of those categories, and does not claim an effect on any of them.
 It is the same thing for everybody: a stranger, three minutes, and a read-back of what happened.
 There are no users yet (see Status) — this is who it was designed for, not who has used it.
-Practice with a stranger is the one
-social context you cannot arrange in advance.
+Practice with a stranger is the one social context you cannot arrange in advance.
 
 ## Architecture
 

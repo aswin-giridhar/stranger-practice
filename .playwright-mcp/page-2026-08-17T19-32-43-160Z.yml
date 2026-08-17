@@ -1,0 +1,20 @@
+- generic [ref=f12e1]:
+  - generic [ref=f12e2]:
+    - banner [ref=f12e3]:
+      - generic [ref=f12e5]:
+        - generic [ref=f12e6]: PRACTICE GYM
+        - heading "Stranger Practice" [level=1] [ref=f12e7]
+    - main [ref=f12e11]:
+      - generic [ref=f12e148]:
+        - generic [active] [ref=f12e149]: Priya · polite but not forthcoming, gives you little to work with
+        - paragraph [ref=f12e156]: Hello. It'
+        - generic [ref=f12e157]:
+          - generic [ref=f12e158]: Priya is speaking
+          - generic "2:58 remaining" [ref=f12e160]: Just getting started
+        - generic [ref=f12e161]:
+          - button "Turn microphone on" [ref=f12e162] [cursor=pointer]
+          - button "Type instead" [ref=f12e163] [cursor=pointer]
+          - button "End early" [ref=f12e164] [cursor=pointer]
+        - group [ref=f12e165]:
+          - generic "Show what has been said so far (2)" [ref=f12e166] [cursor=pointer]
+  - alert [ref=f12e141]
