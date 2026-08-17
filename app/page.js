@@ -439,7 +439,8 @@ export default function StrangerPracticePage() {
       : 'The floor is open';
 
   const focusKey = reportData?.focus?.name;
-  const orderedMetrics = Object.keys(BANDS).sort((a, b) => (a === focusKey ? -1 : b === focusKey ? 1 : 0));
+  const metricKeys = Object.keys(BANDS);
+  const orderedMetrics = focusKey ? [focusKey, ...metricKeys.filter((k) => k !== focusKey)] : metricKeys;
 
   return (
     <div>

@@ -3,7 +3,7 @@
 Conversation practice for adults with ADHD, focused on the hardest thing to rehearse: talking to
 a stranger.
 
-**Live app:** <!-- LIVE_URL -->
+**Live app:** https://stranger-practice.vercel.app
 
 Built for Build with Gemini XPRIZE. Category: **Education & Human Potential**.
 
