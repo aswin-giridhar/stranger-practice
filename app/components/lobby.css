@@ -36,6 +36,63 @@
   height: 100%;
 }
 
+/* ---- Text layer over the WebGL scene ----
+   WebGL draws every shape; glyphs stay as DOM text so they keep the page's
+   font tokens and stay crisp at any scale. The inner box is the 960x600 world,
+   transformed by the same letterbox transform the shaders use. */
+
+.lobby-text {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.lobby-text-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 960px;
+  height: 600px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.lobby-glyph {
+  position: absolute;
+  white-space: nowrap;
+  line-height: 1;
+  user-select: none;
+}
+
+.lobby-glyph-board {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--paper);
+  transform: translateY(-50%);
+}
+
+.lobby-glyph-end {
+  transform: translate(-100%, -50%);
+}
+
+.lobby-glyph-you {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  transform: translateX(-50%);
+}
+
+.lobby-glyph-name {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  transform: translate(-50%, -50%);
+}
+
 /* Small persistent hint, top-left of the map. */
 .lobby-hint {
   position: absolute;

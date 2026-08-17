@@ -6,13 +6,21 @@
  * Replaces the persona radio list with a place you move through: you walk an
  * avatar toward one of three waiting strangers and stand near them to start.
  *
- * Plain Canvas 2D. No WebGL, no engine, no dependencies. All colour comes from
- * the CSS custom properties in app/globals.css, read at runtime with
- * getComputedStyle so the scene follows the page in both themes.
+ * Rendered with raw WebGL (see ./lobbyGL.js) — no engine, no dependencies. All
+ * colour comes from the CSS custom properties in app/globals.css, read at
+ * runtime with getComputedStyle and handed to the shaders as vertex colours, so
+ * the scene follows the page in both themes.
+ *
+ * Two deliberate exceptions to "everything in WebGL":
+ *   - Text is a DOM overlay, transformed with the same letterbox transform as
+ *     the scene. A glyph atlas would be slower to build and worse for a11y.
+ *   - If getContext('webgl') returns null the whole Canvas 2D path below is
+ *     still here and takes over. A blank canvas would look like a bug.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './lobby.css';
+import { createGLRenderer, withAlpha, mix } from './lobbyGL';
 
 /* The scene is authored in a fixed logical space and letterboxed into whatever
    box the container gives us. One coordinate system, any screen size. */
@@ -40,36 +48,7 @@ const KEYMAP = {
   ArrowDown: 'down', s: 'down', S: 'down',
 };
 
-/* ---------- colour helpers ---------- */
-
-function parseColor(input) {
-  const s = String(input || '').trim();
-  if (s.startsWith('#')) {
-    let hex = s.slice(1);
-    if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
-    if (hex.length === 8) hex = hex.slice(0, 6);
-    const n = parseInt(hex, 16);
-    if (Number.isNaN(n)) return [0, 0, 0, 1];
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255, 1];
-  }
-  const m = s.match(/-?\d*\.?\d+/g);
-  if (m && m.length >= 3) {
-    return [Number(m[0]), Number(m[1]), Number(m[2]), m.length > 3 ? Number(m[3]) : 1];
-  }
-  return [0, 0, 0, 1];
-}
-
-function withAlpha(color, a) {
-  const [r, g, b, existing] = parseColor(color);
-  return `rgba(${r}, ${g}, ${b}, ${a * existing})`;
-}
-
-function mix(colorA, colorB, t) {
-  const a = parseColor(colorA);
-  const b = parseColor(colorB);
-  const c = (i) => Math.round(a[i] + (b[i] - a[i]) * t);
-  return `rgb(${c(0)}, ${c(1)}, ${c(2)})`;
-}
+/* ---------- theme ---------- */
 
 const FALLBACK_THEME = {
   paper: '#F6F3ED',
@@ -240,6 +219,9 @@ export default function Lobby({ personas, selectedId, onSelect, onConfirm }) {
   const stageRef = useRef(null);
   const canvasRef = useRef(null);
   const rafRef = useRef(0);
+  const overlayRef = useRef(null);   // DOM text layer, letterboxed with the scene
+  const youLabelRef = useRef(null);
+  const measureRef = useRef(null);   // 2D context used only for measureText
 
   const playerRef = useRef({ x: WORLD_W / 2, y: 512 });
   const targetRef = useRef(null);
@@ -252,6 +234,8 @@ export default function Lobby({ personas, selectedId, onSelect, onConfirm }) {
   const hoverRef = useRef(null);
 
   const [nearId, setNearId] = useState(null);
+  /* null until the loop has decided; 'gl' when WebGL came up, '2d' when it did not. */
+  const [renderMode, setRenderMode] = useState(null);
 
   /* Callbacks live in refs so the animation loop never has to be torn down. */
   const onSelectRef = useRef(onSelect);
@@ -351,8 +335,21 @@ export default function Lobby({ personas, selectedId, onSelect, onConfirm }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return undefined;
+
+    /* WebGL first. A null context is a real absence, so fall back to the 2D
+       path rather than leaving an empty canvas that reads as a bug. */
+    const renderer = createGLRenderer(canvas);
+    const ctx = renderer ? null : canvas.getContext('2d');
+    setRenderMode(renderer ? 'gl' : '2d');
+    if (!renderer && !ctx) return undefined;
+
+    /* Text is measured on a throwaway 2D context so the GL name plates are
+       sized to the same metrics the DOM overlay will render. */
+    if (renderer && !measureRef.current && typeof document !== 'undefined') {
+      const m = document.createElement('canvas');
+      measureRef.current = m.getContext('2d');
+    }
+    const labelWidths = new Map();
 
     let last = performance.now();
 
@@ -418,23 +415,62 @@ export default function Lobby({ personas, selectedId, onSelect, onConfirm }) {
 
       /* --- draw --- */
       const { scale, ox, oy, dpr = 1, cssW = 0, cssH = 0 } = view;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, cssW, cssH);
-      ctx.fillStyle = theme.sunken;
-      ctx.fillRect(0, 0, cssW, cssH);
-      ctx.save();
-      ctx.translate(ox, oy);
-      ctx.scale(scale, scale);
 
-      drawScene(ctx, theme, currentActors, player, nearRef.current, selectedRef.current, hoverRef.current, imagesRef.current);
+      if (renderer) {
+        const measure = measureRef.current;
+        if (measure) {
+          measure.font = `600 13px ${theme.sans}`;
+          currentActors.forEach((a) => {
+            labelWidths.set(a.id, measure.measureText(String(a.name || a.id)).width);
+          });
+        }
 
-      ctx.restore();
+        renderer.render({
+          view,
+          theme,
+          actors: currentActors,
+          player,
+          images: imagesRef.current,
+          nearId: nearRef.current,
+          selectedId: selectedRef.current,
+          hoverId: hoverRef.current,
+          floor: FLOOR,
+          proximity: PROXIMITY,
+          labelWidths,
+        });
+
+        /* Keep the DOM text layer glued to the same letterbox transform. */
+        const overlay = overlayRef.current;
+        if (overlay) {
+          overlay.style.transform = `translate(${ox}px, ${oy}px) scale(${scale})`;
+        }
+        const you = youLabelRef.current;
+        if (you) {
+          you.style.left = `${player.x}px`;
+          you.style.top = `${player.y + 30}px`;
+        }
+      } else {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, cssW, cssH);
+        ctx.fillStyle = theme.sunken;
+        ctx.fillRect(0, 0, cssW, cssH);
+        ctx.save();
+        ctx.translate(ox, oy);
+        ctx.scale(scale, scale);
+
+        drawScene(ctx, theme, currentActors, player, nearRef.current, selectedRef.current, hoverRef.current, imagesRef.current);
+
+        ctx.restore();
+      }
 
       rafRef.current = requestAnimationFrame(step);
     };
 
     rafRef.current = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(rafRef.current);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      if (renderer) renderer.destroy();
+    };
   }, []);
 
   /* ---- pointer: click to move, click a stranger to approach them ---- */
@@ -540,6 +576,34 @@ export default function Lobby({ personas, selectedId, onSelect, onConfirm }) {
         onBlur={handleBlur}
       >
         <canvas ref={canvasRef} className="lobby-canvas" role="img" aria-label={sceneLabel} />
+
+        {/* Text layer. WebGL draws the shapes; glyphs stay as real DOM text,
+            scaled by the same letterbox transform as the scene. Hidden from
+            assistive tech because the canvas aria-label and the button strip
+            below already carry this information. */}
+        {renderMode === 'gl' ? (
+          <div className="lobby-text" aria-hidden="true">
+            <div className="lobby-text-inner" ref={overlayRef}>
+              <span className="lobby-glyph lobby-glyph-board" style={{ left: 342, top: 45 }}>
+                DEPARTURES
+              </span>
+              <span className="lobby-glyph lobby-glyph-board lobby-glyph-end" style={{ left: 618, top: 45 }}>
+                DELAYED
+              </span>
+              <span className="lobby-glyph lobby-glyph-you" ref={youLabelRef}>YOU</span>
+              {actors.map((a) => (
+                <span
+                  key={a.id}
+                  className="lobby-glyph lobby-glyph-name"
+                  style={{ left: a.x, top: a.y + 47.5 }}
+                >
+                  {a.name || a.id}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         <p className="lobby-hint">Click to walk · WASD / arrows · Enter to talk</p>
       </div>
 

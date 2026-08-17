@@ -42,6 +42,39 @@ export default function StrangerPracticePage() {
   const floorBecameSilenceAtRef = useRef(0);
   const personaSpeechTimeoutRef = useRef(null);
 
+  /* -----------------------------------------------------------------------
+     Live mirrors of the state that a long-lived callback needs to read.
+
+     `recognition.onresult` is registered ONCE, when startRecognition() runs,
+     so it permanently closes over that render's variables. Reading `turns`
+     from that closure yields the array as it was at session start, which
+     silently truncated the transcript on the spoken path while the typed
+     path (recreated every render) stayed correct. Everything the callback
+     reads therefore goes through a ref.
+
+     The transcript is the input to every metric, so a stale read here is not
+     a UI glitch: it is a fabricated measurement.
+     ----------------------------------------------------------------------- */
+  const didMountRef = useRef(false);
+  const turnsRef = useRef([]);
+  const floorStateRef = useRef('silence');
+  const isProcessingTurnRef = useRef(false);
+  const sessionIdRef = useRef('');
+  const secondsRemainingRef = useRef(180);
+
+  // One writer for both the ref and the state, so they cannot drift apart.
+  const commitTurns = (next) => {
+    turnsRef.current = next;
+    setTurns(next);
+  };
+
+  // The re-entrancy guard is set synchronously (not via an effect): two
+  // utterances can land in the same tick, and an effect would run too late.
+  const setProcessing = (value) => {
+    isProcessingTurnRef.current = value;
+    setIsProcessingTurn(value);
+  };
+
   // Report state
   const [reportData, setReportData] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -60,6 +93,11 @@ export default function StrangerPracticePage() {
 
   const selectedPersona = PERSONAS[selectedPersonaId] || PERSONAS.warm;
 
+  // Keep the read-only mirrors current for the long-lived speech callback.
+  useEffect(() => { floorStateRef.current = floorState; }, [floorState]);
+  useEffect(() => { sessionIdRef.current = sessionId; }, [sessionId]);
+  useEffect(() => { secondsRemainingRef.current = secondsRemaining; }, [secondsRemaining]);
+
   // Strip the page chrome down to one focal point while a session is live.
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -67,6 +105,23 @@ export default function StrangerPracticePage() {
     return () => {
       delete document.body.dataset.view;
     };
+  }, [view]);
+
+  /* Each view swaps the whole main region. Without moving focus, a keyboard or
+     screen-reader user is left on a control that no longer exists and lands
+     back at the top of the document — so the session starting, the report
+     arriving, and the return to setup all pass unannounced. Focus the new
+     view's heading instead, and let its text be what gets read out. */
+  const viewHeadingRef = useRef(null);
+  useEffect(() => {
+    const node = viewHeadingRef.current;
+    if (!node) return;
+    // Skip the very first paint: stealing focus on load is its own annoyance.
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+    node.focus({ preventScroll: false });
   }, [view]);
 
   // Track when silence starts
@@ -228,17 +283,31 @@ export default function StrangerPracticePage() {
       talkStream.streamMessageChunk(text, false);
       talkStream.endMessage();
 
-      // Estimate speech duration to yield the floor back
-      const words = text.split(/\s+/).length;
-      const estimatedMs = Math.max(1500, words * 300 + 400); // Rough speaking rate estimate
+      // One estimator, used both to yield the floor back and to stamp the
+      // turn. Two separate guesses for the same event is how the metric and
+      // the UI came to disagree about when the persona stopped talking.
+      const estimatedMs = estimateSpeechMs(text);
 
       setFloorState('persona');
       if (personaSpeechTimeoutRef.current) {
         clearTimeout(personaSpeechTimeoutRef.current);
       }
-      
+
       personaSpeechTimeoutRef.current = setTimeout(() => {
         setFloorState('silence');
+        // Stamp the OBSERVED end of the persona's turn. Until this fires the
+        // turn carries an estimate; from here the latency the user is scored
+        // on is measured against something that actually happened.
+        const now = Date.now();
+        const list = turnsRef.current;
+        for (let i = list.length - 1; i >= 0; i -= 1) {
+          if (list[i].role === 'persona') {
+            const patched = [...list];
+            patched[i] = { ...patched[i], endedAt: now };
+            commitTurns(patched);
+            break;
+          }
+        }
       }, estimatedMs);
 
     } catch (err) {
@@ -261,12 +330,14 @@ export default function StrangerPracticePage() {
 
     const newSessionId = crypto.randomUUID();
     setSessionId(newSessionId);
-    setTurns([]);
+    sessionIdRef.current = newSessionId; // needed before the first effect runs
+    commitTurns([]);
     setSecondsRemaining(180);
+    secondsRemainingRef.current = 180;
     setSessionStartTime(Date.now());
     setView('active');
     setErrorMessage(null);
-    setIsProcessingTurn(true);
+    setProcessing(true);
 
     try {
       // 1. Initialize Anam Session
@@ -314,17 +385,18 @@ export default function StrangerPracticePage() {
         throw new Error(turnData.error?.message || 'Failed to start turn');
       }
 
+      const greetStartedAt = Date.now();
       const personaTurn = {
         role: 'persona',
         text: turnData.text,
-        startedAt: Date.now(),
-        endedAt: Date.now() + 2000,
+        startedAt: greetStartedAt,
+        endedAt: greetStartedAt + estimateSpeechMs(turnData.text),
         latencyMs: null,
         overlappedPersona: false,
         onTopic: null,
       };
 
-      setTurns([personaTurn]);
+      commitTurns([personaTurn]);
 
       // 3. Stream text to Anam Avatar
       setTimeout(() => {
@@ -333,9 +405,9 @@ export default function StrangerPracticePage() {
 
     } catch (err) {
       console.error('Session start error:', err);
-      setErrorMessage(err.message);
+      setErrorMessage(friendlyError(err));
     } finally {
-      setIsProcessingTurn(false);
+      setProcessing(false);
       startRecognition();
     }
   };
@@ -343,8 +415,8 @@ export default function StrangerPracticePage() {
   // Process a user turn
   const handleUserTurnSubmit = async (text, isAuto = false) => {
     if ((!text || !text.trim()) && !isAuto) return;
-    if (isProcessingTurn) return;
-    
+    if (isProcessingTurnRef.current) return;
+
     const actualText = (text && text.trim()) ? text.trim() : '[Silence]';
 
     const now = Date.now();
@@ -353,8 +425,13 @@ export default function StrangerPracticePage() {
     setLiveTranscript('');
     setManualInput('');
 
+    // Read through the refs: this function is also reached from the speech
+    // callback registered at session start, where the closed-over state is stale.
+    const currentTurns = turnsRef.current;
+    const currentFloor = floorStateRef.current;
+
     // If persona was talking and user interrupted, we stop Anam's current speech
-    if (floorState === 'persona' && anamClientRef.current) {
+    if (currentFloor === 'persona' && anamClientRef.current) {
        // Anam SDK method to stop current TTS if needed, or we just let it finish.
        // Some versions use .interruptPersona() or .stopTalking().
        try {
@@ -368,9 +445,15 @@ export default function StrangerPracticePage() {
        clearTimeout(personaSpeechTimeoutRef.current);
     }
 
-    const lastPersonaTurn = [...turns].reverse().find((t) => t.role === 'persona');
-    const latencyMs = lastPersonaTurn ? Math.max(0, userStarted - lastPersonaTurn.endedAt) : null;
-    const overlapped = (floorState === 'persona');
+    const lastPersonaTurn = [...currentTurns].reverse().find((t) => t.role === 'persona');
+    // endedAt is only trustworthy once the persona has actually stopped; until
+    // then it carries an estimate. `null` says "not measurable", which is not
+    // the same as zero and must not be scored as a fast reply.
+    const latencyMs =
+      lastPersonaTurn && Number.isFinite(lastPersonaTurn.endedAt)
+        ? Math.max(0, userStarted - lastPersonaTurn.endedAt)
+        : null;
+    const overlapped = currentFloor === 'persona';
 
     const userTurn = {
       role: 'user',
@@ -382,9 +465,9 @@ export default function StrangerPracticePage() {
       onTopic: null,
     };
 
-    const updatedTurns = [...turns, userTurn];
-    setTurns(updatedTurns);
-    setIsProcessingTurn(true);
+    const updatedTurns = [...currentTurns, userTurn];
+    commitTurns(updatedTurns);
+    setProcessing(true);
     setFloorState('silence');
 
     try {
@@ -393,9 +476,9 @@ export default function StrangerPracticePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           personaId: selectedPersonaId,
-          sessionId,
+          sessionId: sessionIdRef.current,
           turns: updatedTurns,
-          secondsRemaining,
+          secondsRemaining: secondsRemainingRef.current,
         }),
       });
 
@@ -404,27 +487,31 @@ export default function StrangerPracticePage() {
         throw new Error(turnData.error?.message || 'Turn generation failed');
       }
 
+      const startedAt = Date.now();
       const personaTurn = {
         role: 'persona',
         text: turnData.text,
-        startedAt: Date.now(),
-        endedAt: Date.now() + 2000,
+        startedAt,
+        // Provisional: overwritten with the observed end when the persona
+        // actually stops speaking. Derived from the text rather than a flat
+        // 2s guess, so it agrees with the estimate driving the floor state.
+        endedAt: startedAt + estimateSpeechMs(turnData.text),
         latencyMs: null,
         overlappedPersona: false,
         onTopic: null,
       };
 
       const finalTurns = [...updatedTurns, personaTurn];
-      setTurns(finalTurns);
+      commitTurns(finalTurns);
 
       // Stream text to Anam Avatar
       streamTextToAnam(turnData.text);
 
     } catch (err) {
       console.error('Turn cycle error:', err);
-      setErrorMessage(err.message);
+      setErrorMessage(friendlyError(err));
     } finally {
-      setIsProcessingTurn(false);
+      setProcessing(false);
     }
   };
 
@@ -450,10 +537,12 @@ export default function StrangerPracticePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sessionId,
+          sessionId: sessionIdRef.current,
           personaId: selectedPersonaId,
           durationMs,
-          turns,
+          // The ref, not the state: this array IS the measurement. Sending a
+          // render-stale copy would score a conversation that did not happen.
+          turns: turnsRef.current,
         }),
       });
 
@@ -469,7 +558,7 @@ export default function StrangerPracticePage() {
       setSessionsCompleted(recordSessionCompleted());
     } catch (err) {
       console.error('Report error:', err);
-      setErrorMessage(err.message);
+      setErrorMessage(friendlyError(err));
       setView('setup');
     }
   };
@@ -526,7 +615,7 @@ export default function StrangerPracticePage() {
           <header className="setup-intro">
             <div>
               <span className="eyebrow">Practice talking to strangers</span>
-              <h2 className="setup-title">
+              <h2 className="setup-title" ref={view === 'setup' ? viewHeadingRef : null} tabIndex={-1}>
                 Rehearse the part that <em>actually</em> goes wrong.
               </h2>
             </div>
@@ -646,7 +735,7 @@ export default function StrangerPracticePage() {
       {/* ========================================================= */}
       {view === 'active' && (
         <div className="stage" style={{ '--accent': selectedPersona.accent }}>
-          <span className="stage-who">
+          <span className="stage-who" ref={view === 'active' ? viewHeadingRef : null} tabIndex={-1}>
             {selectedPersona.name} &middot; {selectedPersona.context}
           </span>
 
@@ -674,12 +763,19 @@ export default function StrangerPracticePage() {
             </div>
           </div>
 
-          <p className={`stage-caption ${userIsSpeaking ? 'is-you' : ''}`}>
+          {/* The persona's line is the whole conversation for a screen-reader
+              user. Without a live region it changes in total silence.
+              `polite` so it never cuts across what is being said. */}
+          <p
+            className={`stage-caption ${userIsSpeaking ? 'is-you' : ''}`}
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {userIsSpeaking ? `“${liveTranscript}”` : lastPersonaLine}
           </p>
 
           <div className="stage-meta">
-            <span className="floor-state">
+            <span className="floor-state" aria-live="polite">
               <span className={`floor-dot ${floorState}`} />
               {floorLabel}
             </span>
@@ -795,7 +891,9 @@ export default function StrangerPracticePage() {
           <section className="focus-block">
             <div>
               <span className="eyebrow">Work on this next</span>
-              <h2 className="focus-headline">{reportData.focus?.label || 'Nothing stood out this time'}</h2>
+              <h2 className="focus-headline" ref={view === 'report' ? viewHeadingRef : null} tabIndex={-1}>
+                {reportData.focus?.label || 'Nothing stood out this time'}
+              </h2>
               <p className="focus-coaching">
                 {reportData.coaching ||
                   'There was not enough conversation to read anything reliable. Try another three minutes.'}
@@ -869,6 +967,29 @@ export default function StrangerPracticePage() {
 
 const SESSION_SECONDS = 180;
 const RING_CIRCUMFERENCE = 2 * Math.PI * 48;
+
+// The single estimator for "how long will this line take to say". Used both to
+// hand the floor back and to stamp a persona turn, so the UI and the metric
+// can never disagree about the same event. ~200 wpm plus a short tail.
+function estimateSpeechMs(text) {
+  const words = String(text || '').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1500, words * 300 + 400);
+}
+
+// Someone is mid-rehearsal of a thing they already find stressful. A raw
+// "TypeError: Failed to fetch" is both frightening and useless to them.
+// The real error still goes to console.error for whoever is debugging.
+function friendlyError(err) {
+  const raw = String(err?.message || '');
+  if (/fetch|network|Load failed|NetworkError/i.test(raw)) {
+    return 'Lost the connection for a moment. Your conversation is still here — try again.';
+  }
+  if (/token|anam|avatar/i.test(raw)) {
+    return 'The stranger could not be reached just now. You can still practise by typing.';
+  }
+  if (!raw) return 'Something went wrong. Nothing you did caused it.';
+  return raw;
+}
 
 // Difficulty is named as well as counted, so the three strangers stay
 // distinguishable without relying on their accent colour.

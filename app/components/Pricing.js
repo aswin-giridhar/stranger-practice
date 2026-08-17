@@ -67,6 +67,11 @@ export default function Pricing({ variant = 'standing', accent, onDismiss, dismi
 
   return (
     <section
+      // Linkable so the submission can cite the pricing directly
+      // (stranger-practice.vercel.app/#pricing) without a judge having to
+      // finish a session first. Only the standing block claims the id, so it
+      // never appears twice in one document.
+      id={isPrompt ? undefined : 'pricing'}
       className={`pricing ${isPrompt ? 'is-prompt' : ''}`}
       style={accent ? { '--accent': accent } : undefined}
       aria-labelledby="pricing-title"

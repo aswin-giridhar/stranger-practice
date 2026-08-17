@@ -68,8 +68,10 @@ still holds the floor. They are never inferred after the fact by asking a model 
 happened.
 
 **Metric thresholds are product judgement, not research.** Every band in `lib/metrics.js` is
-labelled `anchor: 'product'`. A planned research pass did not complete, so there is no literature
-anchor and we do not claim one. What we did instead is a discrimination gate: two hand-written
+labelled `anchor: 'product'`. We ran a literature review and it came back with a negative result:
+no published source supplies a usable threshold for any of these six behaviours, so every band
+stays product judgement and we do not claim otherwise. What we did instead is a discrimination
+gate: two hand-written
 three-minute transcripts, one deliberately good and one deliberately bad, and a script that fails
 if any band cannot tell them apart.
 
@@ -136,8 +138,12 @@ turns; the Anam talking avatar; browser speech capture with live interruption an
 recording; the Gemini schema-constrained judge; deterministic metrics with a passing discrimination
 gate; `/api/health` as an end-to-end eligibility proof.
 
-**Not built:** no payment path — Stripe is not integrated, and the £9/month or £4/session figure in
-our notes is a placeholder with nothing behind it. No durable log store in production: structured
+**Partly built — payments.** There is one plan, £6 a month, with the first session free, and a
+pricing surface and `/api/checkout` route in the deployed app. No Stripe account is connected yet,
+so checkout returns `CONFIG_MISSING` and the page says payments are not live rather than pretending
+a purchase succeeded. **Nothing has been sold. Revenue is £0.**
+
+**Not built:** no durable log store in production: structured
 event logging writes JSONL locally (`lib/logstore.js`), which is not durable on Vercel, and
 Firestore is not wired up. No accounts, no session history, no progress over time. No mobile
 layout. No research anchoring for the metric bands.
