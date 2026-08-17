@@ -971,6 +971,97 @@ body[data-view='active'] .main-content { padding-top: var(--s-6); }
   max-width: 40ch;
 }
 
+/* =========================================================================
+   5. Pricing — one plan, laid out like the rest of the page: hairlines and
+   space, no card, no second colour, no third column.
+   ========================================================================= */
+
+.pricing {
+  --accent: var(--rule-strong);
+  display: grid;
+  gap: var(--s-5);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--s-6);
+}
+
+.pricing-head { display: grid; gap: var(--s-2); max-width: var(--measure); }
+.pricing-title { font-size: var(--t-4); font-weight: 500; letter-spacing: -0.025em; max-width: 22ch; }
+.pricing-lede { font-size: var(--t-0); color: var(--ink-secondary); max-width: 54ch; line-height: 1.65; }
+
+.pricing-body {
+  display: grid;
+  grid-template-columns: 10rem minmax(0, 1fr);
+  gap: var(--s-7);
+  align-items: start;
+}
+
+.pricing-figure {
+  display: grid;
+  gap: var(--s-1);
+  padding-top: var(--s-2);
+  border-top: 2px solid var(--accent);
+}
+.pricing-figure b {
+  font-family: var(--font-mono);
+  font-size: var(--t-5);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1;
+}
+.pricing-figure span { font-size: var(--t--1); color: var(--ink-muted); }
+
+.pricing-lines { list-style: none; display: grid; gap: 0; }
+.pricing-lines li {
+  font-size: var(--t-0);
+  color: var(--ink-secondary);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--rule);
+  max-width: 52ch;
+}
+.pricing-lines li:first-child { border-top: 1px solid var(--rule); }
+
+.pricing-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+/* Absent and broken must not read the same: a pending integration is stated
+   as pending, a failure is stated as a failure. Neither is a silent no-op. */
+.pricing-status {
+  font-size: var(--t--1);
+  max-width: 56ch;
+  border-radius: var(--r-md);
+  padding: var(--s-3) var(--s-4);
+}
+.pricing-status.is-pending {
+  color: var(--signal-watch);
+  background: var(--signal-watch-bg);
+}
+.pricing-status.is-off {
+  color: var(--signal-off);
+  background: var(--signal-off-bg);
+}
+
+.pricing-foot { font-size: var(--t--2); color: var(--ink-muted); max-width: 60ch; }
+
+/* The post-free-session prompt is the same block, given a little more room
+   and its own hairline. Still nothing that counts down at anyone. */
+.pricing.is-prompt {
+  border-top: none;
+  border-left: 3px solid var(--accent);
+  padding: var(--s-5) 0 var(--s-5) var(--s-6);
+  margin-bottom: var(--s-7);
+}
+
+@media (max-width: 700px) {
+  .pricing-body { grid-template-columns: 1fr; gap: var(--s-5); }
+  .pricing.is-prompt { padding-left: var(--s-4); }
+}
+
 /* Microphone on: state carried by fill + label, not by colour alone. */
 .btn-quiet.is-on {
   background: var(--signal-good-bg);

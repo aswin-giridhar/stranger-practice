@@ -1,0 +1,81 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - banner [ref=f1e3]:
+      - generic [ref=f1e4]:
+        - generic [ref=f1e5]:
+          - generic [ref=f1e6]: PRACTICE GYM
+          - heading "Stranger Practice" [level=1] [ref=f1e7]
+        - generic [ref=f1e8]: Gemini 2.5 Active
+    - main [ref=f1e11]:
+      - generic [ref=f1e13]:
+        - generic [ref=f1e14]:
+          - generic [ref=f1e15]:
+            - text: Conversation practice for ADHD adults
+            - heading [level=2] [ref=f1e16]:
+              - text: Rehearse the part that
+              - emphasis [ref=f1e17]: actually
+              - text: goes wrong.
+          - generic [ref=f1e18]:
+            - paragraph [ref=f1e19]: Three strangers, each difficult in a different way. Talk to one of them out loud for three minutes. Afterwards you get one thing to work on — measured from what happened, not guessed.
+            - list [ref=f1e20]:
+              - listitem [ref=f1e21]:
+                - generic [ref=f1e22]: 3:00
+                - generic [ref=f1e23]: A session runs three minutes and ends by itself. Nothing to decide part-way through.
+              - listitem [ref=f1e24]:
+                - generic [ref=f1e25]: "3"
+                - generic [ref=f1e26]: Three people to practise against, from gentle to genuinely hard work.
+              - listitem [ref=f1e27]:
+                - generic [ref=f1e28]: "1"
+                - generic [ref=f1e29]: One thing to work on at the end. Not a scoreboard.
+        - region [ref=f1e30]:
+          - generic [ref=f1e31]:
+            - heading "Choose who you’re talking to" [level=3] [ref=f1e32]
+            - generic [ref=f1e33]: Step 1 of 2
+          - radiogroup "Choose who you’re talking to" [ref=f1e34]:
+            - radio "Maya waiting for a delayed train, happy to chat Warm and patient. Gives you room. Lets you finish your sentence Waits a beat before filling a pause Gives you a couple of sentences back Gentle · 1/5 Selected" [checked] [ref=f1e35] [cursor=pointer]:
+              - generic [ref=f1e37]:
+                - generic [ref=f1e38]:
+                  - generic [ref=f1e39]: Maya
+                  - generic [ref=f1e40]: waiting for a delayed train, happy to chat
+                - generic [ref=f1e41]: Warm and patient. Gives you room.
+                - generic [ref=f1e42]:
+                  - generic [ref=f1e43]: Lets you finish your sentence
+                  - generic [ref=f1e44]: Waits a beat before filling a pause
+                  - generic [ref=f1e45]: Gives you a couple of sentences back
+              - generic [ref=f1e46]:
+                - generic [ref=f1e47]: Gentle · 1/5
+                - generic [ref=f1e54]: Selected
+            - radio "Dan busy, half-distracted, somewhere to be Brisk and transactional. Will cut you off. Cuts in if you run past 7 seconds Fills a pause almost immediately Keeps replies to one short line Demanding · 3/5" [ref=f1e55] [cursor=pointer]:
+              - generic [ref=f1e57]:
+                - generic [ref=f1e58]:
+                  - generic [ref=f1e59]: Dan
+                  - generic [ref=f1e60]: busy, half-distracted, somewhere to be
+                - generic [ref=f1e61]: Brisk and transactional. Will cut you off.
+                - generic [ref=f1e62]:
+                  - generic [ref=f1e63]: Cuts in if you run past 7 seconds
+                  - generic [ref=f1e64]: Fills a pause almost immediately
+                  - generic [ref=f1e65]: Keeps replies to one short line
+              - generic [ref=f1e66]: Demanding · 3/5
+            - radio "Priya polite but not forthcoming, gives you little to work with Reserved and low-signal. You carry it. Lets you finish your sentence Will sit in a silence Answers in a handful of words Sparse · 4/5" [ref=f1e74] [cursor=pointer]:
+              - generic [ref=f1e76]:
+                - generic [ref=f1e77]:
+                  - generic [ref=f1e78]: Priya
+                  - generic [ref=f1e79]: polite but not forthcoming, gives you little to work with
+                - generic [ref=f1e80]: Reserved and low-signal. You carry it.
+                - generic [ref=f1e81]:
+                  - generic [ref=f1e82]: Lets you finish your sentence
+                  - generic [ref=f1e83]: Will sit in a silence
+                  - generic [ref=f1e84]: Answers in a handful of words
+              - generic [ref=f1e85]: Sparse · 4/5
+        - generic [ref=f1e93]:
+          - generic [ref=f1e94]:
+            - heading "Practise with Maya" [level=3] [ref=f1e95]
+            - paragraph [ref=f1e96]: Your microphone carries the conversation. You can switch to typing at any point.
+          - button "Start the three minutes" [ref=f1e97] [cursor=pointer]
+    - contentinfo [ref=f1e98]:
+      - generic [ref=f1e99]:
+        - paragraph [ref=f1e100]:
+          - strong [ref=f1e101]: "Disclaimer:"
+          - text: Stranger Practice is an educational communication rehearsal gym. It is not therapy, diagnosis, or clinical treatment.
+        - paragraph [ref=f1e102]: Powered by Google Gemini & GCP • XPRIZE Hackathon 2026
+  - alert [ref=f1e103]

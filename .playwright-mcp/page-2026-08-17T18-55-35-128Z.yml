@@ -1,0 +1,24 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - banner [ref=f1e3]:
+      - generic [ref=f1e5]:
+        - generic [ref=f1e6]: PRACTICE GYM
+        - heading "Stranger Practice" [level=1] [ref=f1e7]
+    - main [ref=f1e11]:
+      - generic [ref=f1e12]:
+        - alert [ref=f1e104]:
+          - generic [ref=f1e105]: Failed to get Anam token
+          - button "Dismiss" [ref=f1e106] [cursor=pointer]
+        - generic [ref=f1e107]:
+          - generic [ref=f1e108]: Maya · waiting for a delayed train, happy to chat
+          - paragraph [ref=f1e115]: Looks like we’re in for a bit of a wait with this delay, huh? Do you have much of a trip ahead of you today?
+          - generic [ref=f1e116]:
+            - generic [ref=f1e117]: The floor is open
+            - generic "2:59 remaining" [ref=f1e119]: Just getting started
+          - generic [ref=f1e120]:
+            - button "Microphone on" [ref=f1e121] [cursor=pointer]
+            - button "Type instead" [ref=f1e122] [cursor=pointer]
+            - button "End early" [ref=f1e123] [cursor=pointer]
+          - group [ref=f1e124]:
+            - generic "Show what has been said so far (3)" [ref=f1e125] [cursor=pointer]
+  - alert [ref=f1e103]

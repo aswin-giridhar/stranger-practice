@@ -1,0 +1,20 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - banner [ref=f2e3]:
+      - generic [ref=f2e5]:
+        - generic [ref=f2e6]: PRACTICE GYM
+        - heading "Stranger Practice" [level=1] [ref=f2e7]
+    - main [ref=f2e11]:
+      - generic [ref=f2e104]:
+        - generic [ref=f2e105]: Maya · waiting for a delayed train, happy to chat
+        - paragraph [ref=f2e112]: Sounds like we might be here for a while with this delay. I’m Maya, by the way—are you heading home or off to somewhere fun?
+        - generic [ref=f2e113]:
+          - generic [ref=f2e114]: The floor is open
+          - generic "2:59 remaining" [ref=f2e116]: Just getting started
+        - generic [ref=f2e117]:
+          - button "Microphone on" [ref=f2e118] [cursor=pointer]
+          - button "Type instead" [ref=f2e119] [cursor=pointer]
+          - button "End early" [ref=f2e120] [cursor=pointer]
+        - group [ref=f2e121]:
+          - generic "Show what has been said so far (2)" [ref=f2e122] [cursor=pointer]
+  - alert [ref=f2e103]

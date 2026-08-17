@@ -4,6 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PERSONAS, PERSONA_LIST } from '@/lib/personas';
 import { BANDS } from '@/lib/metrics';
 import { createClient } from '@anam-ai/js-sdk';
+import Pricing from '@/app/components/Pricing';
+import {
+  readSessionsCompleted,
+  recordSessionCompleted,
+  readGateWaived,
+  waiveGate,
+  shouldPrompt,
+} from '@/lib/billing/plan';
 
 export default function StrangerPracticePage() {
   const [view, setView] = useState('setup'); // 'setup' | 'active' | 'generating_report' | 'report'
@@ -37,6 +45,17 @@ export default function StrangerPracticePage() {
   const [reportData, setReportData] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showTyping, setShowTyping] = useState(false);
+
+  // Free-session gate. Read from localStorage in an effect only: this page is
+  // prerendered at build time, where `window` does not exist.
+  const [sessionsCompleted, setSessionsCompleted] = useState(0);
+  const [gateWaived, setGateWaived] = useState(false);
+  const [showGate, setShowGate] = useState(false);
+
+  useEffect(() => {
+    setSessionsCompleted(readSessionsCompleted());
+    setGateWaived(readGateWaived());
+  }, []);
 
   const selectedPersona = PERSONAS[selectedPersonaId] || PERSONAS.warm;
 
@@ -190,9 +209,12 @@ export default function StrangerPracticePage() {
   const streamTextToAnam = (text) => {
     if (!anamClientRef.current) return;
     try {
+      // SDK surface is streamMessageChunk(chunk, endOfSpeech) + endMessage().
+      // There is no write()/end() on this stream -- calling those threw
+      // "t.write is not a function" and the avatar silently never spoke.
       const talkStream = anamClientRef.current.createTalkMessageStream();
-      talkStream.write(text);
-      talkStream.end();
+      talkStream.streamMessageChunk(text, false);
+      talkStream.endMessage();
 
       // Estimate speech duration to yield the floor back
       const words = text.split(/\s+/).length;
@@ -214,7 +236,17 @@ export default function StrangerPracticePage() {
   };
 
   // Start the 3-minute session
-  const handleStartSession = async () => {
+  const handleStartSession = async ({ ignoreGate = false } = {}) => {
+    // Gentle gate: after the free session, show the pricing prompt instead of
+    // launching. It is always dismissible — `startAnyway` comes straight back
+    // here with ignoreGate, so nobody is ever locked out of the product.
+    if (!ignoreGate && shouldPrompt({ sessionsCompleted, waived: gateWaived })) {
+      setShowGate(true);
+      if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    setShowGate(false);
+
     const newSessionId = crypto.randomUUID();
     setSessionId(newSessionId);
     setTurns([]);
@@ -229,10 +261,14 @@ export default function StrangerPracticePage() {
       const tokenRes = await fetch('/api/anam-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ avatarId: selectedPersona.anamAvatarId }),
+        body: JSON.stringify({ personaId: selectedPersona.id }),
       });
       const tokenData = await tokenRes.json();
-      if (!tokenRes.ok) throw new Error('Failed to get Anam token');
+      if (!tokenRes.ok) {
+        // Surface what the server actually said. "Failed to get Anam token" tells the
+        // user nothing and hides whether this is config, quota, or a bad persona id.
+        throw new Error(tokenData?.error?.message || `Anam token request failed (${tokenRes.status})`);
+      }
 
       const anamClient = createClient(tokenData.sessionToken, {
         disableInputAudio: true // We use our own SpeechRecognition for metrics
@@ -416,6 +452,9 @@ export default function StrangerPracticePage() {
 
       setReportData(data);
       setView('report');
+      // Counted when the report actually lands, not when a session starts —
+      // a session that errors out must not spend somebody's free one.
+      setSessionsCompleted(recordSessionCompleted());
     } catch (err) {
       console.error('Report error:', err);
       setErrorMessage(err.message);
@@ -459,6 +498,19 @@ export default function StrangerPracticePage() {
       {/* ========================================================= */}
       {view === 'setup' && (
         <div className="setup">
+          {showGate && (
+            <Pricing
+              variant="prompt"
+              accent={selectedPersona.accent}
+              dismissLabel="Not now — start the session anyway"
+              onDismiss={() => {
+                waiveGate();
+                setGateWaived(true);
+                setShowGate(false);
+                handleStartSession({ ignoreGate: true });
+              }}
+            />
+          )}
           <header className="setup-intro">
             <div>
               <span className="eyebrow">Conversation practice for ADHD adults</span>
@@ -554,10 +606,12 @@ export default function StrangerPracticePage() {
                   : 'This browser has no speech recognition, so you can type your side of the conversation instead.'}
               </p>
             </div>
-            <button type="button" className="btn btn-primary" onClick={handleStartSession}>
+            <button type="button" className="btn btn-primary" onClick={() => handleStartSession()}>
               Start the three minutes
             </button>
           </div>
+
+          {!showGate && <Pricing accent={selectedPersona.accent} />}
         </div>
       )}
 
@@ -774,6 +828,8 @@ export default function StrangerPracticePage() {
               Nothing here is a diagnosis. It is a record of one three-minute conversation.
             </span>
           </div>
+
+          <Pricing accent={selectedPersona.accent} />
         </div>
       )}
     </div>
