@@ -79,7 +79,7 @@ export default function Pricing({ variant = 'standing', accent, onDismiss, dismi
         <p className="pricing-lede">
           {isPrompt
             ? 'You have had the whole thing once — a stranger, three minutes, and the read-back afterwards. If it was worth repeating, this is what it costs to keep repeating it.'
-            : 'Have a conversation and read the report without paying for anything. After that, one price keeps the strangers available.'}
+            : 'For quieter, more introverted people who find talking to strangers hard work. Have a conversation and read the report without paying for anything. After that, one price keeps the strangers available.'}
         </p>
       </div>
 

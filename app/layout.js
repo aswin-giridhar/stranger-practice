@@ -1,9 +1,9 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Stranger Practice — Spoken Conversation Gym for ADHD Adults',
+  title: 'Stranger Practice — Rehearse Talking to Strangers',
   description:
-    'Rehearse talking to strangers against distinct AI personas in 3-minute sessions with measured behavioral metrics and constructive coaching. Not therapy — a practice gym.',
+    'A three-minute spoken rehearsal with one of three AI strangers, then one measured thing to work on. Educational communication practice for anyone who finds talking to strangers hard.',
 };
 
 export default function RootLayout({ children }) {
@@ -37,8 +37,9 @@ export default function RootLayout({ children }) {
           <footer className="site-footer">
             <div className="footer-inner">
               <p className="disclaimer">
-                <strong>Disclaimer:</strong> Stranger Practice is an educational communication rehearsal gym. It is not
-                therapy, diagnosis, or clinical treatment.
+                <strong>Disclaimer:</strong> Stranger Practice is educational communication practice — a rehearsal
+                exercise with feedback on what you did. It is not therapy, diagnosis, or treatment, and it makes no
+                claim about health.
               </p>
               <p className="footer-meta">Powered by Google Gemini & GCP • XPRIZE Hackathon 2026</p>
             </div>

@@ -1,0 +1,208 @@
+/* Lobby — a walkable concourse instead of a radio-button list.
+   Everything here reuses the tokens declared in app/globals.css. No new colours. */
+
+.lobby {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  width: 100%;
+}
+
+/* ---- The map ---- */
+
+.lobby-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 8 / 5;
+  min-height: 260px;
+  max-height: 68vh;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  background: var(--surface-sunken);
+  overflow: hidden;
+  cursor: crosshair;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lobby-stage:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.lobby-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Small persistent hint, top-left of the map. */
+.lobby-hint {
+  position: absolute;
+  top: var(--s-3);
+  left: var(--s-3);
+  margin: 0;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-full);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  max-width: calc(100% - var(--s-6));
+}
+
+/* ---- Proximity panel ---- */
+
+.lobby-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+  min-height: 88px;
+  padding: var(--s-4) var(--s-5);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.lobby-panel[data-empty='true'] {
+  color: var(--ink-muted);
+  font-size: var(--t-0);
+}
+
+.lobby-panel-swatch {
+  width: 10px;
+  align-self: stretch;
+  min-height: 44px;
+  border-radius: var(--r-full);
+  background: var(--persona-accent, var(--ink));
+  flex: 0 0 auto;
+}
+
+.lobby-panel-body {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.lobby-panel-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-2);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.lobby-panel-blurb {
+  margin: var(--s-1) 0 0;
+  font-size: var(--t-0);
+  color: var(--ink-secondary);
+  max-width: 48ch;
+}
+
+.lobby-panel-meta {
+  margin: var(--s-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lobby-talk {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--action);
+  border-radius: var(--r-full);
+  background: var(--action);
+  color: var(--action-ink);
+  font-family: var(--font-sans);
+  font-size: var(--t-0);
+  font-weight: 600;
+  padding: var(--s-3) var(--s-5);
+  cursor: pointer;
+  transition: background 160ms var(--ease);
+}
+
+.lobby-talk:hover {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+}
+
+.lobby-talk:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---- Accessible, non-canvas route to the same choice ----
+   Visually hidden until focused, then rendered as a normal control strip.
+   A canvas is opaque to assistive tech, so these buttons are the real UI. */
+
+.lobby-a11y {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-items: stretch;
+}
+
+.lobby-a11y:not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lobby-a11y-legend {
+  flex: 1 0 100%;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+
+.lobby-a11y-item {
+  display: flex;
+  gap: var(--s-2);
+  align-items: center;
+}
+
+.lobby-a11y button {
+  appearance: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-full);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--t--1);
+  padding: var(--s-2) var(--s-4);
+  cursor: pointer;
+}
+
+.lobby-a11y button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.lobby-a11y button[aria-pressed='true'] {
+  border-color: var(--ink);
+}
+
+@media (max-width: 560px) {
+  .lobby-stage { aspect-ratio: 1 / 1; }
+  .lobby-talk { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lobby-talk { transition: none; }
+}

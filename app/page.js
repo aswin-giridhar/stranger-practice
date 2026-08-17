@@ -5,6 +5,7 @@ import { PERSONAS, PERSONA_LIST } from '@/lib/personas';
 import { BANDS } from '@/lib/metrics';
 import { createClient } from '@anam-ai/js-sdk';
 import Pricing from '@/app/components/Pricing';
+import Lobby from '@/app/components/Lobby';
 import {
   readSessionsCompleted,
   recordSessionCompleted,
@@ -524,7 +525,7 @@ export default function StrangerPracticePage() {
           )}
           <header className="setup-intro">
             <div>
-              <span className="eyebrow">Conversation practice for ADHD adults</span>
+              <span className="eyebrow">Practice talking to strangers</span>
               <h2 className="setup-title">
                 Rehearse the part that <em>actually</em> goes wrong.
               </h2>
@@ -532,7 +533,9 @@ export default function StrangerPracticePage() {
             <div>
               <p className="setup-lede">
                 Three strangers, each difficult in a different way. Talk to one of them out loud for three minutes.
-                Afterwards you get one thing to work on — measured from what happened, not guessed.
+                Afterwards you get one thing to work on — measured from what happened, not guessed. It is for anyone
+                who finds strangers hard work: new to a country, back at work after a long gap, an interview or a
+                room full of networking coming up, shy, neurodivergent, or simply out of practice.
               </p>
               <ul className="setup-facts">
                 <li>
@@ -558,6 +561,18 @@ export default function StrangerPracticePage() {
               </h3>
               <span className="eyebrow">Step 1 of 2</span>
             </div>
+
+            {/* Walk up to someone, the way you would in a real concourse. The list below
+                stays as the direct route -- the map is the richer path, not the only one. */}
+            <Lobby
+              personas={PERSONA_LIST}
+              selectedId={selectedPersonaId}
+              onSelect={(id) => setSelectedPersonaId(id)}
+              onConfirm={(id) => {
+                setSelectedPersonaId(id);
+                handleStartSession();
+              }}
+            />
 
             <div className="persona-list" role="radiogroup" aria-labelledby="chooser-title">
               {PERSONA_LIST.map((p) => {
@@ -836,7 +851,7 @@ export default function StrangerPracticePage() {
               Practise again
             </button>
             <span className="report-close-note">
-              Nothing here is a diagnosis. It is a record of one three-minute conversation.
+              Nothing here is a verdict on you. It is a record of one three-minute conversation.
             </span>
           </div>
 

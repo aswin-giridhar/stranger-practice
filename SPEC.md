@@ -1,14 +1,23 @@
-# Conversation practice for ADHD adults — build spec
+# Conversation practice for anyone who finds strangers hard — build spec
 
 Locked 2026-08-17 16:58 UTC. Code freeze 19:00 UTC. Submission deadline 20:00 UTC.
 Category: **Education & Human Potential** (secondary fit: Professional Services Access).
 
 ## What it is
-Adults with ADHD practise talking to *strangers* — the hardest, least practisable social
-context — against varied AI personas. 3-minute live conversation, then measured feedback on
-the specific pragmatic-language behaviours that make stranger interaction go badly.
+An educational communication-skills product. You practise talking to *strangers* — the
+hardest, least practisable social context — against varied AI personas. 3-minute live
+conversation, then measured feedback on the conversational behaviours that make stranger
+interaction go badly.
 
-Not therapy, not diagnosis, not treatment. A practice gym. All copy must say so.
+Written for anyone who finds conversation with strangers hard: people moving to a new
+country, people returning to work after a long gap or a stretch of isolation, career
+switchers facing interviews and networking, shy and socially anxious people, neurodivergent
+people. Those are examples of who finds it useful, never groups the product acts on, and no
+effect on any of them is claimed.
+
+Positioning rule for all copy: describe the exercise and what was observed in it. No health
+framing anywhere — not as a claim, and not as a denial in body copy. The one sanctioned
+denial is the site footer disclaimer.
 
 ## The 3 personas (varied behaviour is the point)
 1. **Warm & patient** — forgiving, asks follow-ups. Confidence baseline.
@@ -24,7 +33,7 @@ Derived, not vibes. Each needs a known-good and known-bad case before the thresh
 - **Interruption rate** — user starts while persona still speaking, per minute.
 - **Question-asking ratio** — questions asked / turns taken. Low = interview-mode failure.
 - **Topic maintenance** — on-topic turns / total, judged by Gemini against the topic stack.
-- **Tangent recovery** — after an off-topic turn, did the next turn return? (ADHD-specific)
+- **Tangent recovery** — after an off-topic turn, did the next turn return?
 - **Response latency** — median ms to start speaking.
 
 RULE: sweep every threshold against one good and one bad transcript before committing it.
@@ -65,5 +74,5 @@ user's notes — locate and copy, do not assume the shell environment has it.
 
 ## Honesty constraints
 - Revenue disclosed exactly as it is. No related-party revenue dressed as arms-length.
-- No clinical claims. "Practice", never "treatment" or "improves ADHD".
+- No health claims of any kind. "Practice", and only ever about the exercise itself.
 - Cold-start setup instructions marked untested unless actually run from clean.

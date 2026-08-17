@@ -1,14 +1,15 @@
 # Stranger Practice
 
-Conversation practice for adults with ADHD, focused on the hardest thing to rehearse: talking to
-a stranger.
+Conversation practice for anyone who finds talking to strangers hard, focused on the hardest thing
+to rehearse: the stranger you cannot arrange in advance.
 
 **Live app:** https://stranger-practice.vercel.app
 
 Built for Build with Gemini XPRIZE. Category: **Education & Human Potential**.
 
-This is a practice tool. It is not therapy, not diagnosis, not treatment, and it makes no clinical
-claim of any kind.
+This is an educational communication-skills product: a rehearsal exercise with feedback on what you
+did in it. It measures observable conversational behaviour in that exercise, nothing about the
+person. It makes no health claim of any kind and is not built around any medical group.
 
 ## What it is
 
@@ -28,9 +29,17 @@ she gives you almost nothing, so the cap is a constraint rather than a suggestio
 
 ## Who it is for
 
-Adults with ADHD who want reps at unstructured social interaction with strangers, and who cannot
-get those reps on demand from another person. Practice with a stranger is the one social context
-you cannot arrange in advance.
+Anyone who finds conversation with strangers hard and cannot get repetitions on demand from another
+person. Written for: people moving to a new country and rehearsing small talk in a second language;
+people going back to work after a long gap or a stretch of isolation; career switchers with
+interviews and networking rooms ahead of them; shy and socially anxious people; neurodivergent
+people, including people with ADHD, who want unstructured reps somewhere nothing is at stake.
+
+The product does not act on any of those categories, and does not claim an effect on any of them.
+It is the same thing for everybody: a stranger, three minutes, and a read-back of what happened.
+There are no users yet (see Status) — this is who it was designed for, not who has used it.
+Practice with a stranger is the one
+social context you cannot arrange in advance.
 
 ## Architecture
 
