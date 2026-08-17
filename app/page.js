@@ -36,8 +36,18 @@ export default function StrangerPracticePage() {
   // Report state
   const [reportData, setReportData] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showTyping, setShowTyping] = useState(false);
 
   const selectedPersona = PERSONAS[selectedPersonaId] || PERSONAS.warm;
+
+  // Strip the page chrome down to one focal point while a session is live.
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.body.dataset.view = view;
+    return () => {
+      delete document.body.dataset.view;
+    };
+  }, [view]);
 
   // Track when silence starts
   useEffect(() => {
@@ -419,29 +429,26 @@ export default function StrangerPracticePage() {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const lastPersonaLine = [...turns].reverse().find((t) => t.role === 'persona')?.text || '';
+  const userIsSpeaking = floorState === 'user' && Boolean(liveTranscript);
+  const floorLabel =
+    floorState === 'persona'
+      ? `${selectedPersona.name} is speaking`
+      : floorState === 'user'
+      ? 'Your turn — listening'
+      : 'The floor is open';
+
+  const focusKey = reportData?.focus?.name;
+  const orderedMetrics = Object.keys(BANDS).sort((a, b) => (a === focusKey ? -1 : b === focusKey ? 1 : 0));
+
   return (
     <div>
       {/* ERROR BANNER */}
       {errorMessage && (
-        <div
-          style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid var(--brand-error)',
-            color: '#fca5a5',
-            padding: '0.85rem 1.25rem',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
+        <div className="notice" role="alert">
           <span>{errorMessage}</span>
-          <button
-            onClick={() => setErrorMessage(null)}
-            style={{ background: 'transparent', border: 'none', color: '#fca5a5', cursor: 'pointer', fontWeight: 700 }}
-          >
-            ✕
+          <button type="button" className="notice-dismiss" onClick={() => setErrorMessage(null)}>
+            Dismiss
           </button>
         </div>
       )}
@@ -450,80 +457,104 @@ export default function StrangerPracticePage() {
       {/* 1. SETUP / PERSONA SELECTOR VIEW                         */}
       {/* ========================================================= */}
       {view === 'setup' && (
-        <div>
-          <section className="hero-section">
-            <span className="hero-tag">ADHD Conversation Rehearsal</span>
-            <h2 className="hero-heading">Talk to strangers without high stakes.</h2>
-            <p className="hero-subheading">
-              Pick a persona for a 3-minute live spoken conversation. Get objective feedback on airtime, pacing, and
-              tangent recovery.
-            </p>
+        <div className="setup">
+          <header className="setup-intro">
+            <div>
+              <span className="eyebrow">Conversation practice for ADHD adults</span>
+              <h2 className="setup-title">
+                Rehearse the part that <em>actually</em> goes wrong.
+              </h2>
+            </div>
+            <div>
+              <p className="setup-lede">
+                Three strangers, each difficult in a different way. Talk to one of them out loud for three minutes.
+                Afterwards you get one thing to work on — measured from what happened, not guessed.
+              </p>
+              <ul className="setup-facts">
+                <li>
+                  <b>3:00</b>
+                  <span>A session runs three minutes and ends by itself. Nothing to decide part-way through.</span>
+                </li>
+                <li>
+                  <b>3</b>
+                  <span>Three people to practise against, from gentle to genuinely hard work.</span>
+                </li>
+                <li>
+                  <b>1</b>
+                  <span>One thing to work on at the end. Not a scoreboard.</span>
+                </li>
+              </ul>
+            </div>
+          </header>
+
+          <section aria-labelledby="chooser-title">
+            <div className="chooser-head">
+              <h3 id="chooser-title" className="chooser-title">
+                Choose who you&rsquo;re talking to
+              </h3>
+              <span className="eyebrow">Step 1 of 2</span>
+            </div>
+
+            <div className="persona-list" role="radiogroup" aria-labelledby="chooser-title">
+              {PERSONA_LIST.map((p) => {
+                const isSelected = selectedPersonaId === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    className="persona-row"
+                    style={{ '--accent': p.accent }}
+                    onClick={() => setSelectedPersonaId(p.id)}
+                  >
+                    <span className="persona-portrait">
+                      <img src={p.avatarImage} alt="" />
+                    </span>
+
+                    <span className="persona-body">
+                      <span className="persona-nameline">
+                        <span className="persona-name">{p.name}</span>
+                        <span className="persona-context">{p.context}</span>
+                      </span>
+                      <span className="persona-blurb">{p.blurb}</span>
+                      <span className="persona-traits">
+                        {personaTraits(p).map((t) => (
+                          <span key={t} className="persona-trait">
+                            {t}
+                          </span>
+                        ))}
+                      </span>
+                    </span>
+
+                    <span className="difficulty">
+                      <span className="difficulty-word">
+                        {DIFFICULTY_WORD[p.difficulty]} &middot; {p.difficulty}/5
+                      </span>
+                      <span className="difficulty-dots" aria-hidden="true">
+                        {[1, 2, 3, 4, 5].map((d) => (
+                          <span key={d} className={`diff-dot ${d <= p.difficulty ? 'filled' : ''}`} />
+                        ))}
+                      </span>
+                      <span className="persona-check">Selected</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </section>
 
-          <div className="persona-grid">
-            {PERSONA_LIST.map((p) => {
-              const isSelected = selectedPersonaId === p.id;
-              return (
-                <div
-                  key={p.id}
-                  className={`persona-card ${isSelected ? 'selected' : ''}`}
-                  style={{ '--card-accent': p.accent }}
-                  onClick={() => setSelectedPersonaId(p.id)}
-                >
-                  <div className="persona-card-header">
-                    <div className="persona-avatar-preview">
-                       <img src={p.avatarImage} alt={p.name} />
-                    </div>
-                    <div className="difficulty-group">
-                      <span>Diff {p.difficulty}</span>
-                      <div style={{ display: 'flex', gap: '3px' }}>
-                        {[1, 2, 3, 4, 5].map((d) => (
-                          <div key={d} className={`diff-dot ${d <= p.difficulty ? 'filled' : ''}`} />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <h3 className="persona-name">{p.name}</h3>
-                  <p className="persona-blurb">{p.blurb}</p>
-                  <div className="persona-context">Context: {p.context}</div>
-
-                  <div className="persona-tags">
-                    <div className="persona-tag-item">
-                      <span className="tag-bullet">•</span>
-                      <span>Video Avatar: {p.anamAvatarId}</span>
-                    </div>
-                    <div className="persona-tag-item">
-                      <span className="tag-bullet">•</span>
-                      <span>Max words: {p.policy.maxWords}</span>
-                    </div>
-                    {p.policy.interrupts && (
-                      <div className="persona-tag-item">
-                        <span className="tag-bullet" style={{ color: 'var(--brand-warning)' }}>
-                          ⚠️
-                        </span>
-                        <span>Will interrupt after 7s monologue</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="start-action-card">
-            <div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.35rem' }}>
-                Ready to practice with {selectedPersona.name}?
-              </h4>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          <div className="launch">
+            <div className="launch-copy">
+              <h3>Practise with {selectedPersona.name}</h3>
+              <p>
                 {speechSupported
-                  ? 'Microphone speech recognition and Anam Video Avatar are enabled.'
-                  : 'Speech recognition not supported in this browser; text fallback enabled.'}
+                  ? 'Your microphone carries the conversation. You can switch to typing at any point.'
+                  : 'This browser has no speech recognition, so you can type your side of the conversation instead.'}
               </p>
             </div>
-            <button className="btn-start" onClick={handleStartSession}>
-              Start 3-Minute Practice Session
+            <button type="button" className="btn btn-primary" onClick={handleStartSession}>
+              Start the three minutes
             </button>
           </div>
         </div>
@@ -533,133 +564,116 @@ export default function StrangerPracticePage() {
       {/* 2. LIVE CONVERSATION VIEW                                 */}
       {/* ========================================================= */}
       {view === 'active' && (
-        <div className="session-container">
-          <div className="session-topbar">
-            <div className="session-persona-pill">
-              <div
-                style={{
-                  width: 12,
-                  height: 12,
-                  borderRadius: '50%',
-                  background: selectedPersona.accent,
-                }}
+        <div className="stage" style={{ '--accent': selectedPersona.accent }}>
+          <span className="stage-who">
+            {selectedPersona.name} &middot; {selectedPersona.context}
+          </span>
+
+          <div className="avatar-frame">
+            <svg className="avatar-ring" viewBox="0 0 100 100" aria-hidden="true">
+              <circle className="ring-track" cx="50" cy="50" r="48" fill="none" strokeWidth="1.4" />
+              <circle
+                className="ring-remaining"
+                cx="50"
+                cy="50"
+                r="48"
+                fill="none"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeDasharray={RING_CIRCUMFERENCE}
+                strokeDashoffset={RING_CIRCUMFERENCE * (1 - Math.max(0, secondsRemaining) / SESSION_SECONDS)}
               />
-              <span>Talking to {selectedPersona.name}</span>
-            </div>
-            <div className="timer-display">{formatTimer(secondsRemaining)}</div>
-          </div>
+            </svg>
 
-          <div className="timer-progress-wrap">
-            <div
-              className="timer-progress-bar"
-              style={{
-                width: `${((180 - secondsRemaining) / 180) * 100}%`,
-                background: selectedPersona.accent,
-              }}
-            />
-          </div>
-
-          {/* AVATAR STAGE */}
-          <div className="avatar-stage" style={{ '--stage-accent': selectedPersona.accent }}>
-            
-            {/* ANAM VIDEO ELEMENT */}
-            <div className="anam-video-container">
-               <video id="anam-video" autoPlay playsInline />
-            </div>
-
-            {/* Floor Status Indicator */}
-            <div className="live-floor-indicator">
-              <span className={`floor-dot ${floorState}`} />
-              <span>
-                {floorState === 'persona'
-                  ? `${selectedPersona.name} is speaking...`
-                  : floorState === 'user'
-                  ? 'Listening to you...'
-                  : 'Floor open'}
-              </span>
-            </div>
-
-            {interruptionAlert && (
-              <div className="live-interruption-alert">⚠️ Interruption recorded: speaking over persona floor</div>
-            )}
-
-            {/* Transcript Stream */}
-            <div className="transcript-feed">
+            <div className="avatar-media">
+              <video id="anam-video" autoPlay playsInline />
               {turns.length === 0 && (
-                <div style={{ color: 'var(--text-muted)', textAlign: 'center', margin: 'auto' }}>
-                  Connecting to Anam Avatar...
-                </div>
+                <div className="avatar-waiting">Connecting to {selectedPersona.name}&hellip;</div>
               )}
-              {turns.map((t, idx) => (
-                <div key={idx} className={`turn-bubble ${t.role}`}>
-                  <div className="turn-bubble-role">{t.role === 'persona' ? selectedPersona.name : 'You'}</div>
-                  <div>{t.text}</div>
-                </div>
-              ))}
             </div>
-
-            {liveTranscript && (
-              <div className="live-speech-preview">
-                <em>Hearing: &ldquo;{liveTranscript}&rdquo;</em>
-              </div>
-            )}
           </div>
 
-          {/* Typing Fallback & Controls */}
-          <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
-            <input
-              type="text"
-              placeholder="Or type what you would say..."
-              value={manualInput}
-              onChange={(e) => setManualInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && manualInput.trim()) {
-                  handleUserTurnSubmit(manualInput);
-                }
-              }}
-              style={{
-                flex: 1,
-                padding: '0.75rem 1rem',
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-full)',
-                color: 'var(--text-primary)',
-                fontFamily: 'var(--font-sans)',
-              }}
-            />
-            <button
-              onClick={() => {
-                if (manualInput.trim()) handleUserTurnSubmit(manualInput);
-              }}
-              disabled={!manualInput.trim() || isProcessingTurn}
-              style={{
-                padding: '0.75rem 1.5rem',
-                background: 'var(--bg-surface-elevated)',
-                border: '1px solid var(--border-strong)',
-                borderRadius: 'var(--radius-full)',
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              Send
-            </button>
+          <p className={`stage-caption ${userIsSpeaking ? 'is-you' : ''}`}>
+            {userIsSpeaking ? `“${liveTranscript}”` : lastPersonaLine}
+          </p>
+
+          <div className="stage-meta">
+            <span className="floor-state">
+              <span className={`floor-dot ${floorState}`} />
+              {floorLabel}
+            </span>
+            <span className="time-left" title={`${formatTimer(secondsRemaining)} remaining`}>
+              {coarseTimeLeft(secondsRemaining)}
+            </span>
           </div>
 
-          <div className="session-controls">
+          {interruptionAlert && (
+            <p className="stage-note" role="status">
+              You started while {selectedPersona.name} still had the floor.
+            </p>
+          )}
+
+          <div className="stage-tools">
             {speechSupported && (
               <button
-                className={`btn-mic-toggle ${isListening ? 'active' : ''}`}
+                type="button"
+                className={`btn btn-quiet ${isListening ? 'is-on' : ''}`}
                 onClick={isListening ? stopRecognition : startRecognition}
               >
-                <span>{isListening ? '🎙️ Mic Active' : '🎙️ Enable Mic'}</span>
+                {isListening ? 'Microphone on' : 'Turn microphone on'}
               </button>
             )}
-
-            <button className="btn-end-session" onClick={handleFinishSession}>
-              Finish &amp; Get Report
+            <button type="button" className="btn-bare" onClick={() => setShowTyping((v) => !v)}>
+              {showTyping ? 'Hide the keyboard' : 'Type instead'}
+            </button>
+            <button type="button" className="btn-bare" onClick={handleFinishSession}>
+              End early
             </button>
           </div>
+
+          {(showTyping || !speechSupported) && (
+            <div className="type-row">
+              <label className="sr-only" htmlFor="manual-say">
+                Type what you would say
+              </label>
+              <input
+                id="manual-say"
+                type="text"
+                placeholder="Type what you would say&hellip;"
+                value={manualInput}
+                onChange={(e) => setManualInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && manualInput.trim()) {
+                    handleUserTurnSubmit(manualInput);
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  if (manualInput.trim()) handleUserTurnSubmit(manualInput);
+                }}
+                disabled={!manualInput.trim() || isProcessingTurn}
+              >
+                Say it
+              </button>
+            </div>
+          )}
+
+          {turns.length > 0 && (
+            <details className="transcript">
+              <summary>Show what has been said so far ({turns.length})</summary>
+              <dl className="transcript-lines">
+                {turns.map((t, idx) => (
+                  <div key={idx} className={`transcript-line ${t.role === 'user' ? 'is-user' : ''}`}>
+                    <dt>{t.role === 'persona' ? selectedPersona.name : 'You'}</dt>
+                    <dd>{t.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </details>
+          )}
         </div>
       )}
 
@@ -667,14 +681,10 @@ export default function StrangerPracticePage() {
       {/* 3. GENERATING REPORT SPINNER                              */}
       {/* ========================================================= */}
       {view === 'generating_report' && (
-        <div style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
-          <div className="live-dot" style={{ width: 16, height: 16, margin: '0 auto 1.5rem' }} />
-          <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-            Evaluating Conversation Signals
-          </h3>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: 450, margin: '0 auto' }}>
-            Running Gemini semantic judge across transcript turns and computing objective pragmatic-language metrics...
-          </p>
+        <div className="waiting" role="status" aria-live="polite">
+          <h2>Reading back the conversation</h2>
+          <p>Working out which one thing would help most next time. This takes a few seconds.</p>
+          <div className="waiting-bar" aria-hidden="true" />
         </div>
       )}
 
@@ -682,93 +692,164 @@ export default function StrangerPracticePage() {
       {/* 4. POST-SESSION REPORT VIEW                               */}
       {/* ========================================================= */}
       {view === 'report' && reportData && (
-        <div className="report-container">
-          <div className="report-header">
-            <div className="report-title-group">
-              <h2>Session Performance Report</h2>
+        <div className="report">
+          <header className="report-top">
+            <div>
+              <span className="eyebrow">After the session</span>
               <p>
-                Practiced with <strong>{selectedPersona.name}</strong> •{' '}
-                {Math.round((reportData.durationMs || 180000) / 1000)}s duration •{' '}
-                {reportData.metrics?.counts?.userTurns || 0} user turns
+                {selectedPersona.name} &middot; {Math.round((reportData.durationMs || 180000) / 1000)} seconds &middot;{' '}
+                {reportData.metrics?.counts?.userTurns || 0} turns from you
+              </p>
+            </div>
+            <p className="report-index">
+              Overall{' '}
+              <b>
+                {reportData.metrics?.composite !== null && reportData.metrics?.composite !== undefined
+                  ? (reportData.metrics.composite * 100).toFixed(0)
+                  : '--'}
+              </b>
+            </p>
+          </header>
+
+          <section className="focus-block">
+            <div>
+              <span className="eyebrow">Work on this next</span>
+              <h2 className="focus-headline">{reportData.focus?.label || 'Nothing stood out this time'}</h2>
+              <p className="focus-coaching">
+                {reportData.coaching ||
+                  'There was not enough conversation to read anything reliable. Try another three minutes.'}
               </p>
             </div>
 
-            <div className="composite-score-badge">
-              <div className="composite-num">
-                {reportData.metrics?.composite !== null ? (reportData.metrics.composite * 100).toFixed(0) : '--'}
-              </div>
-              <div className="composite-label">Overall Index</div>
-            </div>
-          </div>
-
-          {/* PRIMARY FOCUS CARD */}
-          {reportData.focus && (
-            <div className="focus-card">
-              <div className="focus-card-header" style={{ marginBottom: '1rem' }}>
-                <span style={{ 
-                  background: 'var(--brand-primary)', color: '#000', padding: '0.2rem 0.6rem', 
-                  borderRadius: 'var(--radius-full)', fontSize: '0.8rem', fontWeight: 700 
-                }}>
-                  Primary Growth Focus
-                </span>
-                <h3 style={{ marginTop: '0.5rem', fontSize: '1.3rem' }}>{reportData.focus.label}</h3>
-              </div>
-              <p style={{ lineHeight: 1.6 }}>{reportData.coaching}</p>
-            </div>
-          )}
-
-          {/* 6 METRIC CARDS */}
-          <div className="metrics-grid">
-            {Object.keys(BANDS).map((metricKey) => {
-              const b = BANDS[metricKey];
-              const rawVal = reportData.metrics?.raw?.[metricKey];
-              const score = reportData.metrics?.scores?.[metricKey];
-
-              let formattedVal = '--';
-              if (rawVal !== null && rawVal !== undefined) {
-                if (metricKey === 'turnBalance' || metricKey === 'topicMaintenance' || metricKey === 'tangentRecovery' || metricKey === 'questionRatio') {
-                  formattedVal = `${(rawVal * 100).toFixed(0)}%`;
-                } else if (metricKey === 'interruptionsPerMin') {
-                  formattedVal = `${rawVal.toFixed(1)} / min`;
-                } else if (metricKey === 'medianLatencyMs') {
-                  formattedVal = `${Math.round(rawVal)} ms`;
-                }
-              }
-
-              let statusClass = 'good';
-              if (score !== null && score !== undefined) {
-                if (score < 0.4) statusClass = 'bad';
-                else if (score < 0.75) statusClass = 'warn';
-              }
-
-              return (
-                <div key={metricKey} className="metric-card">
-                  <div className="metric-card-top">
-                    <span className="metric-label">{b.label}</span>
-                    <span className="metric-val">{formattedVal}</span>
-                  </div>
-                  
-                  <div className="metric-meter">
-                    <div 
-                      className={`metric-meter-fill ${statusClass}`}
-                      style={{ width: `${(score || 0) * 100}%` }}
-                    />
-                  </div>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {statusClass === 'good' ? b.good : statusClass === 'warn' ? b.warn : b.bad}
-                  </p>
+            {reportData.focus && (
+              <dl className="focus-aside">
+                <div className="focus-stat">
+                  <dt>Your reading</dt>
+                  <dd>{formatMetricValue(reportData.focus.name, reportData.focus.value)}</dd>
                 </div>
-              );
-            })}
-          </div>
+                <div className="focus-stat">
+                  <dt>Comfortable range</dt>
+                  <dd>
+                    {formatBand(reportData.focus.name)}
+                    <small>Everything outside this is worth a look, not a worry.</small>
+                  </dd>
+                </div>
+              </dl>
+            )}
+          </section>
 
-          <div className="report-actions">
-            <button className="btn-start" onClick={() => setView('setup')}>
-              Return to Practice Setup
+          <section aria-labelledby="ledger-title">
+            <div className="chooser-head">
+              <h3 id="ledger-title" className="chooser-title">
+                Everything else, for reference
+              </h3>
+              <span className="eyebrow">Read it or don&rsquo;t</span>
+            </div>
+
+            <div className="ledger">
+              {orderedMetrics.map((metricKey) => {
+                const rawVal = reportData.metrics?.raw?.[metricKey];
+                const score = reportData.metrics?.scores?.[metricKey];
+                const judged = judgeScore(score);
+                return (
+                  <div key={metricKey} className={`ledger-row ${metricKey === focusKey ? 'is-focus' : ''}`}>
+                    <span className="ledger-label">
+                      {BANDS[metricKey].label}
+                      {metricKey === focusKey && <span className="ledger-flag">Your focus</span>}
+                    </span>
+                    <span className="ledger-value">{formatMetricValue(metricKey, rawVal)}</span>
+                    <span className={`ledger-judgement ${judged.tone}`}>{judged.text}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <div className="report-close">
+            <button type="button" className="btn btn-primary" onClick={() => setView('setup')}>
+              Practise again
             </button>
+            <span className="report-close-note">
+              Nothing here is a diagnosis. It is a record of one three-minute conversation.
+            </span>
           </div>
         </div>
       )}
     </div>
   );
+}
+
+/* -------------------------------------------------------------------------
+   Presentation helpers. These only shape how existing values are read;
+   nothing here changes what the API returns or how metrics are computed.
+   ------------------------------------------------------------------------- */
+
+const SESSION_SECONDS = 180;
+const RING_CIRCUMFERENCE = 2 * Math.PI * 48;
+
+// Difficulty is named as well as counted, so the three strangers stay
+// distinguishable without relying on their accent colour.
+const DIFFICULTY_WORD = {
+  1: 'Gentle',
+  2: 'Easy going',
+  3: 'Demanding',
+  4: 'Sparse',
+  5: 'Relentless',
+};
+
+// Read straight off each persona's policy object so the description and the
+// behaviour cannot drift apart.
+function personaTraits(p) {
+  const traits = [];
+
+  traits.push(
+    p.policy.interrupts
+      ? `Cuts in if you run past ${Math.round(p.policy.interruptAfterMs / 1000)} seconds`
+      : 'Lets you finish your sentence'
+  );
+
+  if (p.policy.silenceToleranceMs >= 4000) traits.push('Will sit in a silence');
+  else if (p.policy.silenceToleranceMs >= 2000) traits.push('Waits a beat before filling a pause');
+  else traits.push('Fills a pause almost immediately');
+
+  if (p.policy.maxWords <= 10) traits.push('Answers in a handful of words');
+  else if (p.policy.maxWords <= 20) traits.push('Keeps replies to one short line');
+  else traits.push('Gives you a couple of sentences back');
+
+  return traits;
+}
+
+// A coarse phrase rather than ticking digits: the exact seconds are still
+// available on hover and to screen readers, but they are not on screen
+// counting down at you for three minutes.
+function coarseTimeLeft(sec) {
+  if (sec <= 0) return 'Time';
+  if (sec <= 20) return 'Wrapping up';
+  if (sec <= 60) return 'Under a minute left';
+  if (sec <= 120) return 'A couple of minutes left';
+  return 'Just getting started';
+}
+
+function formatMetricValue(key, value) {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '—';
+  if (key === 'interruptionsPerMin') return `${value.toFixed(1)} per min`;
+  if (key === 'medianLatencyMs') return `${Math.round(value)} ms`;
+  return `${(value * 100).toFixed(0)}%`;
+}
+
+function formatBand(key) {
+  const band = BANDS[key]?.good;
+  if (!Array.isArray(band)) return '—';
+  const [lo, hi] = band;
+  if (key === 'interruptionsPerMin') return `${lo.toFixed(1)}–${hi.toFixed(1)} per min`;
+  if (key === 'medianLatencyMs') return `${Math.round(lo)}–${Math.round(hi)} ms`;
+  return `${(lo * 100).toFixed(0)}–${(hi * 100).toFixed(0)}%`;
+}
+
+// Absent and poor must not look the same: an unmeasured metric says so.
+function judgeScore(score) {
+  if (score === null || score === undefined) return { tone: 'none', text: 'Not measured' };
+  if (score >= 0.75) return { tone: 'good', text: 'Comfortable' };
+  if (score >= 0.4) return { tone: 'watch', text: 'Near the edge' };
+  return { tone: 'off', text: 'Outside the range' };
 }
